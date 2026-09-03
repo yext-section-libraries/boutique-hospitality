@@ -1,0 +1,11 @@
+{
+  "id": "boutique-hospitality",
+  "displayName": "Boutique Hospitality",
+  "vertical": [
+    "HOSPITALITY"
+  ],
+  "purpose": [
+    "LOCATION"
+  ],
+  "pageSetType": "ENTITY"
+}
