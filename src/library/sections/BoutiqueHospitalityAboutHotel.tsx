@@ -16,7 +16,6 @@ import {
   Image,
   resolveComponentData,
   ThemeColor,
-  ThemeOptions,
   useDocument,
   VisibilityWrapper,
   type StyledTextValue,
@@ -27,6 +26,8 @@ import {
   type YextFields,
 } from "@yext/visual-editor";
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
+import { createCta } from "../shared/createCta";
+import { aspectRatioOptions } from "../shared/fieldOptions";
 
 type StyledTextProps = {
   text: YextEntityField<string>;
@@ -129,7 +130,7 @@ const AboutHotelFields: YextFields<BoutiqueHospitalityAboutHotelProps> = {
       aspectRatio: {
         label: "Aspect Ratio",
         type: "basicSelector",
-        options: ThemeOptions.ASPECT_RATIO,
+        options: aspectRatioOptions,
       },
       imageConstrain: {
         label: "Image Constrain",
@@ -410,35 +411,7 @@ export const BoutiqueHospitalityAboutHotel: YextComponentConfig<BoutiqueHospital
         aspectRatio: 1.5,
         imageConstrain: "filled",
       },
-      cta: {
-        data: {
-          actionType: "link",
-          cta: {
-            field: "",
-            constantValue: {
-              label: "Check Availability",
-              link: "#",
-              linkType: "URL",
-              ctaType: "textAndLink",
-            },
-            constantValueEnabled: true,
-            selectedType: "textAndLink",
-          },
-          openInNewTab: false,
-        },
-        styles: {
-          variant: "secondary",
-          button: {
-            fontFamily: "default",
-            fontSize: "default",
-            fontWeight: "default",
-            fontStyle: "default",
-            textTransform: "default",
-            borderRadius: "default",
-            letterSpacing: "default",
-          },
-        },
-      },
+      cta: createCta({ label: "Check Availability", variant: "secondary" }),
     },
     render: BoutiqueHospitalityAboutHotelComponent,
   };

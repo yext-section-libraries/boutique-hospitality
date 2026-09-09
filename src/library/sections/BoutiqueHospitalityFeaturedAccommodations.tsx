@@ -15,23 +15,22 @@ import {
   getSurfaceColorStyle,
   getThemeColorCssValue,
   Image,
-  MaybeRTF,
   resolveComponentData,
   ThemeColor,
-  ThemeOptions,
   toPuckFields,
   useDocument,
   VisibilityWrapper,
   type StyledTextValue,
   type TranslatableAssetImage,
   type TranslatableRichText,
-  type RichText,
   type TranslatableString,
   type YextComponentConfig,
   type YextEntityField,
   type YextFields,
 } from "@yext/visual-editor";
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
+import { aspectRatioOptions } from "../shared/fieldOptions";
+import { getTextStyle, renderRichText } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
@@ -208,37 +207,6 @@ type BoutiqueHospitalityFeaturedAccommodationsProps = {
   };
 };
 
-const getStyledTextCss = (
-  styles: StyledTextValue,
-  color?: string,
-): React.CSSProperties => ({
-  margin: 0,
-  color,
-  fontFamily: styles.fontFamily === "default" ? undefined : styles.fontFamily,
-  fontSize: styles.fontSize === "default" ? undefined : styles.fontSize,
-  fontWeight: styles.fontWeight === "default" ? undefined : styles.fontWeight,
-  fontStyle: styles.fontStyle === "default" ? undefined : styles.fontStyle,
-  textTransform:
-    styles.textTransform === "default" ? undefined : styles.textTransform,
-});
-
-const renderResolvedRichText = (
-  value: unknown,
-  props?: React.HTMLAttributes<HTMLDivElement>,
-) =>
-  React.isValidElement(value) ? (
-    <div {...props}>{value}</div>
-  ) : (
-    <MaybeRTF
-      {...props}
-      data={
-        typeof value === "string"
-          ? value
-          : (value as string | RichText | undefined)
-      }
-    />
-  );
-
 const FeaturedFields: YextFields<BoutiqueHospitalityFeaturedAccommodationsProps> =
   {
     section: {
@@ -311,7 +279,7 @@ const FeaturedFields: YextFields<BoutiqueHospitalityFeaturedAccommodationsProps>
         aspectRatio: {
           label: "Aspect Ratio",
           type: "basicSelector",
-          options: ThemeOptions.ASPECT_RATIO,
+          options: aspectRatioOptions,
         },
         imageConstrain: {
           label: "Image Constrain",
@@ -580,7 +548,11 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
                 >
                   <h2
                     className="ybh-featured-heading-text"
-                    style={getStyledTextCss(heading.styles, headingColor)}
+                    style={{
+                      ...getTextStyle(heading.styles),
+                      color: headingColor,
+                      margin: 0,
+                    }}
                   >
                     {resolvedHeading}
                   </h2>
@@ -592,12 +564,13 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
                 >
                   <div
                     className="ybh-featured-heading-description"
-                    style={getStyledTextCss(
-                      description.styles,
-                      descriptionColor,
-                    )}
+                    style={{
+                      ...getTextStyle(description.styles),
+                      color: descriptionColor,
+                      margin: 0,
+                    }}
                   >
-                    {renderResolvedRichText(resolvedDescription, {
+                    {renderRichText(resolvedDescription, undefined, {
                       className: "ybh-featured-heading-description-rtf",
                     })}
                   </div>
@@ -677,19 +650,11 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
                       getThemeColorCssValue(
                         items.styles.description.fontColor,
                       ) ?? listTextColor;
-                    const itemDescriptionRichTextStyleOverrides = {
-                      ...items.styles.description.styles,
-                      color: itemDescriptionColor,
-                    };
                     const itemDescription = item.description
                       ? resolveComponentData(
                           item.description,
                           locale,
                           streamDocument,
-                          {
-                            richTextStyleOverrides:
-                              itemDescriptionRichTextStyleOverrides,
-                          },
                         )
                       : undefined;
                     return (
@@ -699,29 +664,9 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
                       >
                         <h3
                           style={{
+                            ...getTextStyle(items.styles.title.styles),
                             margin: 0,
                             color: itemTitleColor,
-                            fontFamily:
-                              items.styles.title.styles.fontFamily === "default"
-                                ? undefined
-                                : items.styles.title.styles.fontFamily,
-                            fontSize:
-                              items.styles.title.styles.fontSize === "default"
-                                ? undefined
-                                : items.styles.title.styles.fontSize,
-                            fontWeight:
-                              items.styles.title.styles.fontWeight === "default"
-                                ? undefined
-                                : items.styles.title.styles.fontWeight,
-                            fontStyle:
-                              items.styles.title.styles.fontStyle === "default"
-                                ? undefined
-                                : items.styles.title.styles.fontStyle,
-                            textTransform:
-                              items.styles.title.styles.textTransform ===
-                              "default"
-                                ? undefined
-                                : items.styles.title.styles.textTransform,
                           }}
                         >
                           {itemTitleText}
@@ -729,14 +674,13 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
                         <div
                           className="ybh-featured-item-description"
                           style={{
-                            ...getStyledTextCss(
-                              items.styles.description.styles,
-                              itemDescriptionColor,
-                            ),
+                            ...getTextStyle(items.styles.description.styles),
+                            color: itemDescriptionColor,
+                            margin: 0,
                             marginTop: "10px",
                           }}
                         >
-                          {renderResolvedRichText(itemDescription, {
+                          {renderRichText(itemDescription, undefined, {
                             className: "ybh-featured-item-description-rtf",
                           })}
                         </div>
@@ -778,7 +722,9 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
 export const BoutiqueHospitalityFeaturedAccommodations: YextComponentConfig<BoutiqueHospitalityFeaturedAccommodationsProps> =
   {
     label: "Featured Accommodations",
-    fields: toPuckFields(FeaturedFields),
+    fields: toPuckFields<BoutiqueHospitalityFeaturedAccommodationsProps>(
+      FeaturedFields,
+    ),
     defaultProps: {
       section: {
         visibleOnLivePage: true,

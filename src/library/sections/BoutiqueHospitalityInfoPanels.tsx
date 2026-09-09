@@ -21,12 +21,10 @@ import {
   getSurfaceColorStyle,
   getThemeColorCssValue,
   Image,
-  MaybeRTF,
   resolveComponentData,
   ThemeColor,
   useDocument,
   VisibilityWrapper,
-  type MaybeRTFProps,
   type StyledTextValue,
   type TranslatableAssetImage,
   type TranslatableRichText,
@@ -36,7 +34,9 @@ import {
   type YextFields,
 } from "@yext/visual-editor";
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
-import { parsePhoneNumber } from "awesome-phonenumber";
+import { formatPhoneNumber } from "@yext/visual-editor/section-library-support";
+import { createCta } from "../shared/createCta";
+import { renderRichText } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
@@ -123,20 +123,6 @@ type BoutiqueHospitalityInfoPanelsProps = {
     text: PanelTextStyleProps;
     label: PanelTextStyleProps;
   };
-};
-
-const formatPhoneNumber = (
-  value: string,
-  format: "international" | "domestic",
-) => {
-  const cleaned = value.replace(/(?!^\+)\+|[^\d+]/g, "");
-  const parsed = parsePhoneNumber(cleaned);
-  if (!parsed.valid || !parsed.number) {
-    return value;
-  }
-  return format === "international"
-    ? parsed.number.international
-    : parsed.number.national;
 };
 
 const InfoPanelsFields: YextFields<BoutiqueHospitalityInfoPanelsProps> = {
@@ -562,19 +548,6 @@ const PanelImage = ({
   );
 };
 
-const renderResolvedRichText = (
-  value: string | React.ReactElement | undefined,
-  richTextStyleOverrides: MaybeRTFProps["richTextStyleOverrides"],
-) => {
-  if (React.isValidElement(value)) {
-    return value;
-  }
-  const data = typeof value === "string" ? value : undefined;
-  return (
-    <MaybeRTF data={data} richTextStyleOverrides={richTextStyleOverrides} />
-  );
-};
-
 const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
   BoutiqueHospitalityInfoPanelsProps
 > = ({
@@ -633,13 +606,11 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
     summaryCard.accessibilityBody.text,
     locale,
     streamDocument,
-    { richTextStyleOverrides: summaryRichTextStyleOverrides },
   );
   const resolvedCheckIn = resolveComponentData(
     summaryCard.checkInBody.text,
     locale,
     streamDocument,
-    { richTextStyleOverrides: summaryRichTextStyleOverrides },
   );
   const resolvedHoursHeading =
     resolveComponentData(hoursCard.heading.text, locale, streamDocument, {
@@ -1101,7 +1072,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                       }
                     >
                       <div>
-                        {renderResolvedRichText(
+                        {renderRichText(
                           resolvedAccessibility,
                           summaryRichTextStyleOverrides,
                         )}
@@ -1131,7 +1102,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                       }
                     >
                       <div>
-                        {renderResolvedRichText(
+                        {renderRichText(
                           resolvedCheckIn,
                           summaryRichTextStyleOverrides,
                         )}
@@ -1405,69 +1376,19 @@ export const BoutiqueHospitalityInfoPanels: YextComponentConfig<BoutiqueHospital
             constantValueEnabled: true,
           },
         },
-        visitCta: {
-          data: {
-            actionType: "link",
-            cta: {
-              field: "",
-              constantValue: {
-                label: "Visit Website",
-                link: "#",
-                linkType: "URL",
-                ctaType: "textAndLink",
-              },
-              constantValueEnabled: true,
-              selectedType: "textAndLink",
-            },
-            openInNewTab: false,
+        visitCta: createCta({
+          label: "Visit Website",
+          variant: "primary",
+          color: {
+            selectedColor: "palette-primary",
+            contrastingColor: "palette-primary-contrast",
+            isDarkColor: false,
           },
-          styles: {
-            variant: "primary",
-            color: {
-              selectedColor: "palette-primary",
-              contrastingColor: "palette-primary-contrast",
-              isDarkColor: false,
-            },
-            button: {
-              fontFamily: "default",
-              fontSize: "default",
-              fontWeight: "default",
-              fontStyle: "default",
-              textTransform: "default",
-              borderRadius: "default",
-              letterSpacing: "default",
-            },
-          },
-        },
-        availabilityCta: {
-          data: {
-            actionType: "link",
-            cta: {
-              field: "",
-              constantValue: {
-                label: "Check Availability",
-                link: "#",
-                linkType: "URL",
-                ctaType: "textAndLink",
-              },
-              constantValueEnabled: true,
-              selectedType: "textAndLink",
-            },
-            openInNewTab: false,
-          },
-          styles: {
-            variant: "secondary",
-            button: {
-              fontFamily: "default",
-              fontSize: "default",
-              fontWeight: "default",
-              fontStyle: "default",
-              textTransform: "default",
-              borderRadius: "default",
-              letterSpacing: "default",
-            },
-          },
-        },
+        }),
+        availabilityCta: createCta({
+          label: "Check Availability",
+          variant: "secondary",
+        }),
       },
       hoursCard: {
         heading: {

@@ -16,7 +16,6 @@ import {
   Image,
   resolveComponentData,
   ThemeColor,
-  ThemeOptions,
   useDocument,
   VisibilityWrapper,
   type StyledTextValue,
@@ -27,6 +26,9 @@ import {
   type YextFields,
 } from "@yext/visual-editor";
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
+import { createCta } from "../shared/createCta";
+import { aspectRatioOptions } from "../shared/fieldOptions";
+import { getTextStyle } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<string>;
@@ -129,7 +131,7 @@ const EventsFields: YextFields<BoutiqueHospitalitySpecialEventsProps> = {
       aspectRatio: {
         label: "Aspect Ratio",
         type: "basicSelector",
-        options: ThemeOptions.ASPECT_RATIO,
+        options: aspectRatioOptions,
       },
       imageConstrain: {
         label: "Image Constrain",
@@ -346,28 +348,13 @@ const BoutiqueHospitalitySpecialEventsComponent: PuckComponent<
                 >
                   <h2
                     style={{
+                      ...getTextStyle(heading.styles),
                       margin: 0,
                       color: headingColor,
-                      fontFamily:
-                        heading.styles.fontFamily === "default"
-                          ? undefined
-                          : heading.styles.fontFamily,
                       fontSize:
                         heading.styles.fontSize === "default"
                           ? "clamp(2.25rem, 3.75vw, 3.25rem)"
                           : heading.styles.fontSize,
-                      fontWeight:
-                        heading.styles.fontWeight === "default"
-                          ? undefined
-                          : heading.styles.fontWeight,
-                      fontStyle:
-                        heading.styles.fontStyle === "default"
-                          ? undefined
-                          : heading.styles.fontStyle,
-                      textTransform:
-                        heading.styles.textTransform === "default"
-                          ? undefined
-                          : heading.styles.textTransform,
                     }}
                   >
                     {resolvedHeading}
@@ -466,35 +453,7 @@ export const BoutiqueHospitalitySpecialEvents: YextComponentConfig<BoutiqueHospi
         aspectRatio: 0.67,
         imageConstrain: "filled",
       },
-      cta: {
-        data: {
-          actionType: "link",
-          cta: {
-            field: "",
-            constantValue: {
-              label: "Contact Us",
-              link: "#",
-              linkType: "URL",
-              ctaType: "textAndLink",
-            },
-            constantValueEnabled: true,
-            selectedType: "textAndLink",
-          },
-          openInNewTab: false,
-        },
-        styles: {
-          variant: "secondary",
-          button: {
-            fontFamily: "default",
-            fontSize: "default",
-            fontWeight: "default",
-            fontStyle: "default",
-            textTransform: "default",
-            borderRadius: "default",
-            letterSpacing: "default",
-          },
-        },
-      },
+      cta: createCta({ label: "Contact Us", variant: "secondary" }),
     },
     render: BoutiqueHospitalitySpecialEventsComponent,
   };

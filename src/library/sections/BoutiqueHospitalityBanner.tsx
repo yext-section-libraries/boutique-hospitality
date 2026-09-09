@@ -1,13 +1,11 @@
 import type { SectionConfig } from "@yext/visual-editor";
 
-import { isValidElement } from "react";
 import { PuckComponent } from "@puckeditor/core";
 import { CircleSlash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   Body,
   EntityField,
-  MaybeRTF,
   PageSection,
   type StyledTextValue,
   type ThemeColor,
@@ -23,6 +21,7 @@ import {
   toPuckFields,
   useDocument,
 } from "@yext/visual-editor";
+import { renderRichText } from "../shared/sectionStyles";
 
 type BoutiqueHospitalityBannerProps = {
   data: {
@@ -165,7 +164,6 @@ const BoutiqueHospitalityBannerComponent: PuckComponent<BoutiqueHospitalityBanne
     data.text,
     i18n.language,
     streamDocument,
-    { richTextStyleOverrides },
   );
 
   if (!resolvedText) {
@@ -189,14 +187,7 @@ const BoutiqueHospitalityBannerComponent: PuckComponent<BoutiqueHospitalityBanne
         displayName="Banner Text"
         fieldId={data.text.field}
       >
-        {isValidElement(resolvedText) ? (
-          resolvedText
-        ) : typeof resolvedText === "string" ? (
-          <MaybeRTF
-            data={resolvedText}
-            richTextStyleOverrides={richTextStyleOverrides}
-          />
-        ) : null}
+        {renderRichText(resolvedText, richTextStyleOverrides)}
       </EntityField>
     </PageSection>
   );
@@ -207,7 +198,9 @@ const BoutiqueHospitalityBannerComponent: PuckComponent<BoutiqueHospitalityBanne
  */
 export const BoutiqueHospitalityBanner: YextComponentConfig<BoutiqueHospitalityBannerProps> = {
   label: "Banner",
-  fields: toPuckFields(BoutiqueHospitalityBannerFields),
+  fields: toPuckFields<BoutiqueHospitalityBannerProps>(
+    BoutiqueHospitalityBannerFields,
+  ),
   defaultProps: {
     data: {
       text: {

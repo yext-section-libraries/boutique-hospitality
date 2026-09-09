@@ -11,20 +11,19 @@ import {
   getDefaultRTF,
   getSurfaceColorStyle,
   getThemeColorCssValue,
-  MaybeRTF,
   resolveComponentData,
   ThemeColor,
   toPuckFields,
   useDocument,
   VisibilityWrapper,
   type StyledTextValue,
-  type MaybeRTFProps,
   type TranslatableRichText,
   type TranslatableString,
   type YextComponentConfig,
   type YextEntityField,
   type YextFields,
 } from "@yext/visual-editor";
+import { renderRichText } from "../shared/sectionStyles";
 
 type FaqItemFields = {
   question: YextEntityField<TranslatableString>;
@@ -155,19 +154,6 @@ type BoutiqueHospitalityFaqProps = {
       fontColor?: ThemeColor;
     };
   };
-};
-
-const renderResolvedRichText = (
-  value: string | React.ReactElement | undefined,
-  richTextStyleOverrides: MaybeRTFProps["richTextStyleOverrides"],
-) => {
-  if (React.isValidElement(value)) {
-    return value;
-  }
-  const data = typeof value === "string" ? value : undefined;
-  return (
-    <MaybeRTF data={data} richTextStyleOverrides={richTextStyleOverrides} />
-  );
 };
 
 const FaqFields: YextFields<BoutiqueHospitalityFaqProps> = {
@@ -383,9 +369,7 @@ const BoutiqueHospitalityFaqComponent: PuckComponent<
                   };
                   const answerText = item.answer;
                   const answerValue = answerText
-                    ? resolveComponentData(answerText, locale, streamDocument, {
-                        richTextStyleOverrides: answerRichTextStyleOverrides,
-                      })
+                    ? resolveComponentData(answerText, locale, streamDocument)
                     : undefined;
                   const isOpen = openIndex === index;
                   return (
@@ -441,7 +425,7 @@ const BoutiqueHospitalityFaqComponent: PuckComponent<
                             color: answerColor,
                           }}
                         >
-                          {renderResolvedRichText(
+                          {renderRichText(
                             answerValue,
                             answerRichTextStyleOverrides,
                           )}
@@ -462,7 +446,7 @@ const BoutiqueHospitalityFaqComponent: PuckComponent<
 export const BoutiqueHospitalityFaq: YextComponentConfig<BoutiqueHospitalityFaqProps> =
   {
     label: "FAQ",
-    fields: toPuckFields(FaqFields),
+    fields: toPuckFields<BoutiqueHospitalityFaqProps>(FaqFields),
     defaultProps: {
       section: {
         visibleOnLivePage: true,

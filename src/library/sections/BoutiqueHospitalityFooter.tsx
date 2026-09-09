@@ -1,6 +1,5 @@
 import type { SectionConfig } from "@yext/visual-editor";
 
-import * as React from "react";
 import type { PuckComponent } from "@puckeditor/core";
 import {
   Address,
@@ -12,7 +11,6 @@ import {
   EntityField,
   getAnalyticsScopeHash,
   getSurfaceColorStyle,
-  getThemeColorCssValue,
   resolveComponentData,
   ThemeColor,
   useDocument,
@@ -23,7 +21,8 @@ import {
   type YextEntityField,
   type YextFields,
 } from "@yext/visual-editor";
-import { parsePhoneNumber } from "awesome-phonenumber";
+import { formatPhoneNumber } from "@yext/visual-editor/section-library-support";
+import { getTextStyle } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<string>;
@@ -68,20 +67,6 @@ type BoutiqueHospitalityFooterProps = {
   quickLinks: LinkItem[];
   socialLinksHeading: TextOnlyProps;
   socialLinks: LinkItem[];
-};
-
-const formatPhoneNumber = (
-  value: string,
-  format: "international" | "domestic",
-) => {
-  const cleaned = value.replace(/(?!^\+)\+|[^\d+]/g, "");
-  const parsed = parsePhoneNumber(cleaned);
-  if (!parsed.valid || !parsed.number) {
-    return value;
-  }
-  return format === "international"
-    ? parsed.number.international
-    : parsed.number.national;
 };
 
 const FooterFields: YextFields<BoutiqueHospitalityFooterProps> = {
@@ -372,96 +357,16 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
     section.backgroundColor,
     streamDocument,
   );
-  const contactTextStyle: React.CSSProperties = {
-    color: getThemeColorCssValue(contactStyles.fontColor),
-    fontFamily:
-      contactStyles.styles?.fontFamily === "default"
-        ? undefined
-        : contactStyles.styles?.fontFamily,
-    fontSize:
-      contactStyles.styles?.fontSize === "default"
-        ? undefined
-        : contactStyles.styles?.fontSize,
-    fontWeight:
-      contactStyles.styles?.fontWeight === "default"
-        ? undefined
-        : contactStyles.styles?.fontWeight,
-    fontStyle:
-      contactStyles.styles?.fontStyle === "default"
-        ? undefined
-        : contactStyles.styles?.fontStyle,
-    textTransform:
-      contactStyles.styles?.textTransform === "default"
-        ? undefined
-        : contactStyles.styles?.textTransform,
-  };
-  const linkColumnTextStyle: React.CSSProperties = {
-    color: getThemeColorCssValue(linkColumnStyles.fontColor),
-    fontFamily:
-      linkColumnStyles.styles?.fontFamily === "default"
-        ? undefined
-        : linkColumnStyles.styles?.fontFamily,
-    fontSize:
-      linkColumnStyles.styles?.fontSize === "default"
-        ? undefined
-        : linkColumnStyles.styles?.fontSize,
-    fontWeight:
-      linkColumnStyles.styles?.fontWeight === "default"
-        ? undefined
-        : linkColumnStyles.styles?.fontWeight,
-    fontStyle:
-      linkColumnStyles.styles?.fontStyle === "default"
-        ? undefined
-        : linkColumnStyles.styles?.fontStyle,
-    textTransform:
-      linkColumnStyles.styles?.textTransform === "default"
-        ? undefined
-        : linkColumnStyles.styles?.textTransform,
-  };
-  const linkTextStyle: React.CSSProperties = {
-    color: getThemeColorCssValue(linkStyles.fontColor),
-    fontFamily:
-      linkStyles.styles?.fontFamily === "default"
-        ? undefined
-        : linkStyles.styles?.fontFamily,
-    fontSize:
-      linkStyles.styles?.fontSize === "default"
-        ? undefined
-        : linkStyles.styles?.fontSize,
-    fontWeight:
-      linkStyles.styles?.fontWeight === "default"
-        ? undefined
-        : linkStyles.styles?.fontWeight,
-    fontStyle:
-      linkStyles.styles?.fontStyle === "default"
-        ? undefined
-        : linkStyles.styles?.fontStyle,
-    textTransform:
-      linkStyles.styles?.textTransform === "default"
-        ? undefined
-        : linkStyles.styles?.textTransform,
-  };
-  const brandTextStyle: React.CSSProperties = {
-    color: getThemeColorCssValue(brand.fontColor),
-    fontFamily:
-      brand.styles?.fontFamily === "default"
-        ? undefined
-        : brand.styles?.fontFamily,
-    fontSize:
-      brand.styles?.fontSize === "default" ? undefined : brand.styles?.fontSize,
-    fontWeight:
-      brand.styles?.fontWeight === "default"
-        ? undefined
-        : brand.styles?.fontWeight,
-    fontStyle:
-      brand.styles?.fontStyle === "default"
-        ? undefined
-        : brand.styles?.fontStyle,
-    textTransform:
-      brand.styles?.textTransform === "default"
-        ? undefined
-        : brand.styles?.textTransform,
-  };
+  const contactTextStyle = getTextStyle(
+    contactStyles.styles,
+    contactStyles.fontColor,
+  );
+  const linkColumnTextStyle = getTextStyle(
+    linkColumnStyles.styles,
+    linkColumnStyles.fontColor,
+  );
+  const linkTextStyle = getTextStyle(linkStyles.styles, linkStyles.fontColor);
+  const brandTextStyle = getTextStyle(brand.styles, brand.fontColor);
 
   return (
     <VisibilityWrapper

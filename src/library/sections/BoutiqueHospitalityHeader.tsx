@@ -32,11 +32,11 @@ import {
   getThemeColorCssValue,
   i18nComponentsInstance,
   normalizeLink,
-  normalizeThemeColorToken,
   resolveComponentData,
-  ThemeOptions,
   useDocument,
 } from "@yext/visual-editor";
+import { aspectRatioOptions } from "../shared/fieldOptions";
+import { hasExplicitThemeColor } from "../shared/sectionStyles";
 
 type SharedHeaderVariant =
   | "centerLogoSplitNav"
@@ -142,10 +142,6 @@ const defaultUtilityIconImage: SharedHeaderAction["iconImage"] = {
   styles: {
     borderRadius: "default",
   },
-};
-
-const hasExplicitThemeColor = (color?: ThemeColor): color is ThemeColor => {
-  return Boolean(normalizeThemeColorToken(color));
 };
 
 const resolveBorderRadius = (value?: string): string | undefined => {
@@ -408,7 +404,7 @@ const BoutiqueHospitalityHeaderFields: YextFields<BoutiqueHospitalityHeaderProps
               aspectRatio: {
                 label: "Aspect Ratio",
                 type: "basicSelector",
-                options: ThemeOptions.ASPECT_RATIO,
+                options: aspectRatioOptions,
               },
               imageConstrain: {
                 label: "Image Constrain",
@@ -557,7 +553,7 @@ const BoutiqueHospitalityHeaderFields: YextFields<BoutiqueHospitalityHeaderProps
       aspectRatio: {
         label: "Aspect Ratio",
         type: "basicSelector",
-        options: ThemeOptions.ASPECT_RATIO,
+        options: aspectRatioOptions,
       },
       imageConstrain: {
         label: "Image Constrain",

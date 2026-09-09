@@ -14,7 +14,6 @@ import {
   getSurfaceColorStyle,
   getThemeColorCssValue,
   Image,
-  MaybeRTF,
   getDefaultRTF,
   resolveComponentData,
   ThemeColor,
@@ -24,13 +23,13 @@ import {
   type TranslatableAssetImage,
   type TranslatableRichText,
   type TranslatableString,
-  type MaybeRTFProps,
   type StyledTextValue,
   type YextComponentConfig,
   type YextEntityField,
   type YextFields,
 } from "@yext/visual-editor";
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
+import { renderRichText } from "../shared/sectionStyles";
 
 type AmenityItemFields = {
   image: YextEntityField<ImageType | ComplexImageType | TranslatableAssetImage>;
@@ -222,19 +221,6 @@ type BoutiqueHospitalityResortAmenitiesProps = {
     data: typeof amenitiesSource.value;
     styles: AmenityStyles;
   };
-};
-
-const renderResolvedRichText = (
-  value: string | React.ReactElement | undefined,
-  richTextStyleOverrides: MaybeRTFProps["richTextStyleOverrides"],
-) => {
-  if (React.isValidElement(value)) {
-    return value;
-  }
-  const data = typeof value === "string" ? value : undefined;
-  return (
-    <MaybeRTF data={data} richTextStyleOverrides={richTextStyleOverrides} />
-  );
 };
 
 const AmenitiesFields: YextFields<BoutiqueHospitalityResortAmenitiesProps> =
@@ -635,10 +621,6 @@ const BoutiqueHospitalityResortAmenitiesComponent: PuckComponent<
                               item.description,
                               locale,
                               streamDocument,
-                              {
-                                richTextStyleOverrides:
-                                  descriptionRichTextStyleOverrides,
-                              },
                             )
                           : undefined;
                         return (
@@ -709,7 +691,7 @@ const BoutiqueHospitalityResortAmenitiesComponent: PuckComponent<
                                   color: descriptionColor ?? overlayTextColor,
                                 }}
                               >
-                                {renderResolvedRichText(
+                                {renderRichText(
                                   desc,
                                   descriptionRichTextStyleOverrides,
                                 )}
@@ -755,7 +737,9 @@ const BoutiqueHospitalityResortAmenitiesComponent: PuckComponent<
 export const BoutiqueHospitalityResortAmenities: YextComponentConfig<BoutiqueHospitalityResortAmenitiesProps> =
   {
     label: "Resort Amenities",
-    fields: toPuckFields(AmenitiesFields),
+    fields: toPuckFields<BoutiqueHospitalityResortAmenitiesProps>(
+      AmenitiesFields,
+    ),
     defaultProps: {
       section: {
         visibleOnLivePage: true,

@@ -15,7 +15,6 @@ import {
   getSurfaceColorStyle,
   getThemeColorCssValue,
   Image,
-  MaybeRTF,
   resolveComponentData,
   ThemeColor,
   toPuckFields,
@@ -24,13 +23,13 @@ import {
   type TranslatableAssetImage,
   type TranslatableRichText,
   type TranslatableString,
-  type MaybeRTFProps,
   type StyledTextValue,
   type YextComponentConfig,
   type YextEntityField,
   type YextFields,
 } from "@yext/visual-editor";
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
+import { getTextStyle, renderRichText } from "../shared/sectionStyles";
 
 type BlogItemFields = {
   image: YextEntityField<ImageType | ComplexImageType | TranslatableAssetImage>;
@@ -189,19 +188,6 @@ type BoutiqueHospitalityBlogProps = {
     data: typeof blogSource.value;
     styles: BlogCardStyles;
   };
-};
-
-const renderResolvedRichText = (
-  value: string | React.ReactElement | undefined,
-  richTextStyleOverrides: MaybeRTFProps["richTextStyleOverrides"],
-) => {
-  if (React.isValidElement(value)) {
-    return value;
-  }
-  const data = typeof value === "string" ? value : undefined;
-  return (
-    <MaybeRTF data={data} richTextStyleOverrides={richTextStyleOverrides} />
-  );
 };
 
 const BlogFields: YextFields<BoutiqueHospitalityBlogProps> = {
@@ -453,27 +439,8 @@ const BoutiqueHospitalityBlogComponent: PuckComponent<
                 <h2
                   className="ybh-blog-heading-text"
                   style={{
+                    ...getTextStyle(heading.styles),
                     color: sectionTextColor,
-                    fontFamily:
-                      heading.styles.fontFamily === "default"
-                        ? undefined
-                        : heading.styles.fontFamily,
-                    fontSize:
-                      heading.styles.fontSize === "default"
-                        ? undefined
-                        : heading.styles.fontSize,
-                    fontWeight:
-                      heading.styles.fontWeight === "default"
-                        ? undefined
-                        : heading.styles.fontWeight,
-                    fontStyle:
-                      heading.styles.fontStyle === "default"
-                        ? undefined
-                        : heading.styles.fontStyle,
-                    textTransform:
-                      heading.styles.textTransform === "default"
-                        ? undefined
-                        : heading.styles.textTransform,
                   }}
                 >
                   {resolvedHeading}
@@ -528,10 +495,6 @@ const BoutiqueHospitalityBlogComponent: PuckComponent<
                               item.description,
                               locale,
                               streamDocument,
-                              {
-                                richTextStyleOverrides:
-                                  descriptionRichTextStyleOverrides,
-                              },
                             )
                           : undefined;
                         return (
@@ -598,7 +561,7 @@ const BoutiqueHospitalityBlogComponent: PuckComponent<
                                   color: descriptionColor,
                                 }}
                               >
-                                {renderResolvedRichText(
+                                {renderRichText(
                                   descriptionValue,
                                   descriptionRichTextStyleOverrides,
                                 )}
@@ -644,7 +607,7 @@ const BoutiqueHospitalityBlogComponent: PuckComponent<
 export const BoutiqueHospitalityBlog: YextComponentConfig<BoutiqueHospitalityBlogProps> =
   {
     label: "Blog",
-    fields: toPuckFields(BlogFields),
+    fields: toPuckFields<BoutiqueHospitalityBlogProps>(BlogFields),
     defaultProps: {
       section: {
         visibleOnLivePage: true,

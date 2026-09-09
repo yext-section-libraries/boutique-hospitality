@@ -20,6 +20,7 @@ import {
   type YextEntityField,
   type YextFields,
 } from "@yext/visual-editor";
+import { getTextStyle } from "../shared/sectionStyles";
 
 type ReviewItem = {
   authorName?: string;
@@ -190,27 +191,8 @@ const BoutiqueHospitalityReviewsComponent: PuckComponent<BoutiqueHospitalityRevi
                   <h2
                     className="ybh-reviews-heading-text"
                     style={{
+                      ...getTextStyle(heading.styles),
                       color: headingColor,
-                      fontFamily:
-                        heading.styles.fontFamily === "default"
-                          ? undefined
-                          : heading.styles.fontFamily,
-                      fontSize:
-                        heading.styles.fontSize === "default"
-                          ? undefined
-                          : heading.styles.fontSize,
-                      fontWeight:
-                        heading.styles.fontWeight === "default"
-                          ? undefined
-                          : heading.styles.fontWeight,
-                      fontStyle:
-                        heading.styles.fontStyle === "default"
-                          ? undefined
-                          : heading.styles.fontStyle,
-                      textTransform:
-                        heading.styles.textTransform === "default"
-                          ? undefined
-                          : heading.styles.textTransform,
                     }}
                   >
                     {resolvedHeading}

@@ -17,7 +17,6 @@ import {
   normalizeThemeColorToken,
   resolveComponentData,
   ThemeColor,
-  ThemeOptions,
   useDocument,
   VisibilityWrapper,
   type StyledTextValue,
@@ -28,6 +27,8 @@ import {
   type YextFields,
 } from "@yext/visual-editor";
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
+import { createCta } from "../shared/createCta";
+import { aspectRatioOptions } from "../shared/fieldOptions";
 
 type StyledTextProps = {
   text: YextEntityField<string>;
@@ -176,7 +177,7 @@ const HeroFields: YextFields<BoutiqueHospitalityHeroProps> = {
       aspectRatio: {
         label: "Aspect Ratio",
         type: "basicSelector",
-        options: ThemeOptions.ASPECT_RATIO,
+        options: aspectRatioOptions,
       },
       imageConstrain: {
         label: "Image Constrain",
@@ -790,69 +791,19 @@ export const BoutiqueHospitalityHero: YextComponentConfig<BoutiqueHospitalityHer
         aspectRatio: 1.2,
         imageConstrain: "filled",
       },
-      primaryCta: {
-        data: {
-          actionType: "link",
-          cta: {
-            field: "",
-            constantValue: {
-              label: "Book A Room",
-              link: "#",
-              linkType: "URL",
-              ctaType: "textAndLink",
-            },
-            constantValueEnabled: true,
-            selectedType: "textAndLink",
-          },
-          openInNewTab: false,
+      primaryCta: createCta({
+        label: "Book A Room",
+        variant: "primary",
+        color: {
+          selectedColor: "palette-primary",
+          contrastingColor: "palette-primary-contrast",
+          isDarkColor: false,
         },
-        styles: {
-          variant: "primary",
-          color: {
-            selectedColor: "palette-primary",
-            contrastingColor: "palette-primary-contrast",
-            isDarkColor: false,
-          },
-          button: {
-            fontFamily: "default",
-            fontSize: "default",
-            fontWeight: "default",
-            fontStyle: "default",
-            textTransform: "default",
-            borderRadius: "default",
-            letterSpacing: "default",
-          },
-        },
-      },
-      secondaryCta: {
-        data: {
-          actionType: "link",
-          cta: {
-            field: "",
-            constantValue: {
-              label: "Explore Special Offers",
-              link: "#",
-              linkType: "URL",
-              ctaType: "textAndLink",
-            },
-            constantValueEnabled: true,
-            selectedType: "textAndLink",
-          },
-          openInNewTab: false,
-        },
-        styles: {
-          variant: "secondary",
-          button: {
-            fontFamily: "default",
-            fontSize: "default",
-            fontWeight: "default",
-            fontStyle: "default",
-            textTransform: "default",
-            borderRadius: "default",
-            letterSpacing: "default",
-          },
-        },
-      },
+      }),
+      secondaryCta: createCta({
+        label: "Explore Special Offers",
+        variant: "secondary",
+      }),
     },
     render: BoutiqueHospitalityHeroComponent,
   };

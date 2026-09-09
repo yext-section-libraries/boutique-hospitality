@@ -25,7 +25,8 @@ import {
   type YextEntityField,
   type YextFields,
 } from "@yext/visual-editor";
-import { parsePhoneNumber } from "awesome-phonenumber";
+import { formatPhoneNumber } from "@yext/visual-editor/section-library-support";
+import { getTextStyle } from "../shared/sectionStyles";
 
 type BoutiqueHospitalityNearbyPropertiesProps = {
   section: {
@@ -60,15 +61,6 @@ const defaultTextStyles: StyledTextValue = {
   fontWeight: "default",
   fontStyle: "default",
   textTransform: "default",
-};
-
-const formatPhoneNumber = (value: string) => {
-  const cleaned = value.replace(/(?!^\+)\+|[^\d+]/g, "");
-  const parsed = parsePhoneNumber(cleaned);
-  if (!parsed.valid || !parsed.number) {
-    return value;
-  }
-  return parsed.number.national;
 };
 
 const getMilesBetween = (
@@ -307,27 +299,8 @@ const BoutiqueHospitalityNearbyPropertiesComponent: PuckComponent<
                     <h2
                       className="ybh-nearby-heading-text"
                       style={{
+                        ...getTextStyle(heading.styles),
                         color: headingColor,
-                        fontFamily:
-                          heading.styles.fontFamily === "default"
-                            ? undefined
-                            : heading.styles.fontFamily,
-                        fontSize:
-                          heading.styles.fontSize === "default"
-                            ? undefined
-                            : heading.styles.fontSize,
-                        fontWeight:
-                          heading.styles.fontWeight === "default"
-                            ? undefined
-                            : heading.styles.fontWeight,
-                        fontStyle:
-                          heading.styles.fontStyle === "default"
-                            ? undefined
-                            : heading.styles.fontStyle,
-                        textTransform:
-                          heading.styles.textTransform === "default"
-                            ? undefined
-                            : heading.styles.textTransform,
                       }}
                     >
                       {resolvedHeading}
