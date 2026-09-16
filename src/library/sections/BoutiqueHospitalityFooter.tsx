@@ -20,6 +20,7 @@ import {
   type YextComponentConfig,
   type YextEntityField,
   type YextFields,
+  msg,
 } from "@yext/visual-editor";
 import { formatPhoneNumber } from "@yext/visual-editor/section-library-support";
 import { getTextStyle } from "../shared/sectionStyles";
@@ -71,36 +72,36 @@ type BoutiqueHospitalityFooterProps = {
 
 const FooterFields: YextFields<BoutiqueHospitalityFooterProps> = {
   section: {
-    label: "Section",
+    label: msg("fields.section", "Section"),
     type: "object",
     objectFields: {
       visibleOnLivePage: {
-        label: "Visible on Live Page",
+        label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
         type: "radio",
         options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
+          { label: msg("fields.options.yes", "Yes"), value: true },
+          { label: msg("fields.options.no", "No"), value: false },
         ],
       },
       backgroundColor: {
-        label: "Background Color",
+        label: msg("fields.backgroundColor", "Background Color"),
         type: "basicSelector",
         options: "BACKGROUND_COLOR",
       },
     },
   },
   brand: {
-    label: "Brand",
+    label: msg("fields.brand", "Brand"),
     type: "object",
     objectFields: {
       text: {
         type: "entityField",
-        label: "Text",
+        label: msg("fields.text", "Text"),
         filter: { types: ["type.string"] },
       },
-      styles: { label: "Text Styles", type: "styledText" },
+      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
       fontColor: {
-        label: "Font Color",
+        label: msg("fields.fontColor", "Font Color"),
         type: "basicSelector",
         options: "SITE_COLOR",
       },
@@ -108,40 +109,40 @@ const FooterFields: YextFields<BoutiqueHospitalityFooterProps> = {
   },
   address: {
     type: "entityField",
-    label: "Address",
+    label: msg("fields.address", "Address"),
     filter: { types: ["type.address"] },
   },
   showRegion: {
-    label: "Show Region",
+    label: msg("fields.showRegion", "Show Region"),
     type: "radio",
     options: [
-      { label: "Yes", value: true },
-      { label: "No", value: false },
+      { label: msg("fields.options.yes", "Yes"), value: true },
+      { label: msg("fields.options.no", "No"), value: false },
     ],
   },
   showCountry: {
-    label: "Show Country",
+    label: msg("fields.showCountry", "Show Country"),
     type: "radio",
     options: [
-      { label: "Yes", value: true },
-      { label: "No", value: false },
+      { label: msg("fields.options.yes", "Yes"), value: true },
+      { label: msg("fields.options.no", "No"), value: false },
     ],
   },
   phones: {
-    label: "Phones",
+    label: msg("fields.phones", "Phones"),
     type: "object",
     objectFields: {
       items: {
-        label: "Items",
+        label: msg("fields.items", "Items"),
         type: "array",
         arrayFields: {
           number: {
             type: "entityField",
-            label: "Number",
+            label: msg("fields.number", "Number"),
             filter: { types: ["type.phone"] },
           },
           label: {
-            label: "Label",
+            label: msg("fields.label", "Label"),
             type: "entityField",
             filter: { types: ["type.string"] },
           },
@@ -164,65 +165,65 @@ const FooterFields: YextFields<BoutiqueHospitalityFooterProps> = {
             : item.label?.field) || item.number?.field || "Phone",
       },
       phoneFormat: {
-        label: "Phone Format",
+        label: msg("fields.phoneFormat", "Phone Format"),
         type: "radio",
         options: [
-          { label: "Domestic", value: "domestic" },
-          { label: "International", value: "international" },
+          { label: msg("fields.options.domestic", "Domestic"), value: "domestic" },
+          { label: msg("fields.options.international", "International"), value: "international" },
         ],
       },
       includeHyperlink: {
-        label: "Include Hyperlink",
+        label: msg("fields.includeHyperlink", "Include Hyperlink"),
         type: "radio",
         options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
+          { label: msg("fields.options.yes", "Yes"), value: true },
+          { label: msg("fields.options.no", "No"), value: false },
         ],
       },
     },
   },
   contactStyles: {
-    label: "Contact Text Styles",
+    label: msg("fields.contactTextStyles", "Contact Text Styles"),
     type: "object",
     objectFields: {
-      styles: { label: "Text Styles", type: "styledText" },
-      fontColor: { label: "Font Color", type: "basicSelector", options: "SITE_COLOR" },
+      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
+      fontColor: { label: msg("fields.fontColor", "Font Color"), type: "basicSelector", options: "SITE_COLOR" },
     },
   },
   linkColumnStyles: {
-    label: "Link Column Heading Styles",
+    label: msg("fields.linkColumnHeadingStyles", "Link Column Heading Styles"),
     type: "object",
     objectFields: {
-      styles: { label: "Text Styles", type: "styledText" },
-      fontColor: { label: "Font Color", type: "basicSelector", options: "SITE_COLOR" },
+      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
+      fontColor: { label: msg("fields.fontColor", "Font Color"), type: "basicSelector", options: "SITE_COLOR" },
     },
   },
   linkStyles: {
-    label: "Link Styles",
+    label: msg("fields.linkStyles", "Link Styles"),
     type: "object",
     objectFields: {
-      styles: { label: "Text Styles", type: "styledText" },
-      fontColor: { label: "Font Color", type: "basicSelector", options: "SITE_COLOR" },
+      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
+      fontColor: { label: msg("fields.fontColor", "Font Color"), type: "basicSelector", options: "SITE_COLOR" },
     },
   },
   quickLinksHeading: {
-    label: "Quick Links Heading",
+    label: msg("fields.quickLinksHeading", "Quick Links Heading"),
     type: "object",
     objectFields: {
-      text: { type: "entityField", label: "Text", filter: { types: ["type.string"] } },
+      text: { type: "entityField", label: msg("fields.text", "Text"), filter: { types: ["type.string"] } },
     },
   },
   quickLinks: {
-    label: "Quick Links",
+    label: msg("fields.quickLinks", "Quick Links"),
     type: "array",
     arrayFields: {
       label: {
-        label: "Label",
+        label: msg("fields.label", "Label"),
         type: "entityField",
         filter: { types: ["type.string"] },
       },
       link: {
-        label: "Link",
+        label: msg("fields.link", "Link"),
         type: "entityField",
         filter: { types: ["type.string"] },
       },
@@ -245,23 +246,23 @@ const FooterFields: YextFields<BoutiqueHospitalityFooterProps> = {
         : item.label?.field) || "Quick Link",
   },
   socialLinksHeading: {
-    label: "Social Links Heading",
+    label: msg("fields.socialLinksHeading", "Social Links Heading"),
     type: "object",
     objectFields: {
-      text: { type: "entityField", label: "Text", filter: { types: ["type.string"] } },
+      text: { type: "entityField", label: msg("fields.text", "Text"), filter: { types: ["type.string"] } },
     },
   },
   socialLinks: {
-    label: "Social Links",
+    label: msg("fields.socialLinks", "Social Links"),
     type: "array",
     arrayFields: {
       label: {
-        label: "Label",
+        label: msg("fields.label", "Label"),
         type: "entityField",
         filter: { types: ["type.string"] },
       },
       link: {
-        label: "Link",
+        label: msg("fields.link", "Link"),
         type: "entityField",
         filter: { types: ["type.string"] },
       },

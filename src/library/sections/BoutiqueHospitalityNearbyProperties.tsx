@@ -12,6 +12,7 @@ import {
   MapboxStaticMapComponent,
   mapboxStaticMapStyleOptions,
   mergeMeta,
+  pt,
   resolveComponentData,
   resolveUrlTemplate,
   ThemeColor,
@@ -24,8 +25,10 @@ import {
   type YextComponentConfig,
   type YextEntityField,
   type YextFields,
+  msg,
 } from "@yext/visual-editor";
 import { formatPhoneNumber } from "@yext/visual-editor/section-library-support";
+import { useTranslation } from "react-i18next";
 import { getTextStyle } from "../shared/sectionStyles";
 
 type BoutiqueHospitalityNearbyPropertiesProps = {
@@ -90,70 +93,70 @@ const getMilesBetween = (
 
 const NearbyFields: YextFields<BoutiqueHospitalityNearbyPropertiesProps> = {
   section: {
-    label: "Section",
+    label: msg("fields.section", "Section"),
     type: "object",
     objectFields: {
       visibleOnLivePage: {
-        label: "Visible on Live Page",
+        label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
         type: "radio",
         options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
+          { label: msg("fields.options.yes", "Yes"), value: true },
+          { label: msg("fields.options.no", "No"), value: false },
         ],
       },
       backgroundColor: {
-        label: "Background Color",
+        label: msg("fields.backgroundColor", "Background Color"),
         type: "basicSelector",
         options: "BACKGROUND_COLOR",
       },
       cardBackgroundColor: {
-        label: "Card Background Color",
+        label: msg("fields.cardBackgroundColor", "Card Background Color"),
         type: "basicSelector",
         options: "BACKGROUND_COLOR",
       },
     },
   },
   heading: {
-    label: "Heading",
+    label: msg("fields.heading", "Heading"),
     type: "object",
     objectFields: {
       text: {
         type: "entityField",
-        label: "Text",
+        label: msg("fields.text", "Text"),
         filter: { types: ["type.string"] },
       },
-      styles: { label: "Text Styles", type: "styledText" },
+      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
       fontColor: {
-        label: "Font Color",
+        label: msg("fields.fontColor", "Font Color"),
         type: "basicSelector",
         options: "SITE_COLOR",
       },
     },
   },
   radius: {
-    label: "Radius",
+    label: msg("fields.radius", "Radius"),
     type: "number",
   },
   limit: {
-    label: "Limit",
+    label: msg("fields.limit", "Limit"),
     type: "number",
   },
   map: {
-    label: "Map",
+    label: msg("fields.map", "Map"),
     type: "object",
     objectFields: {
       coordinate: {
         type: "entityField",
-        label: "Coordinates",
+        label: msg("fields.coordinates", "Coordinates"),
         filter: { types: ["type.coordinate"] },
       },
       mapStyle: {
-        label: "Mapbox Map Style",
+        label: msg("fields.mapboxMapStyle", "Mapbox Map Style"),
         type: "select",
         options: mapboxStaticMapStyleOptions,
       },
-      zoom: { label: "Zoom", type: "number", min: 0, max: 22 },
-      height: { label: "Height", type: "text" },
+      zoom: { label: msg("fields.zoom", "Zoom"), type: "number", min: 0, max: 22 },
+      height: { label: msg("fields.height", "Height"), type: "text" },
     },
   },
 };
@@ -162,6 +165,7 @@ const BoutiqueHospitalityNearbyPropertiesComponent: PuckComponent<
   BoutiqueHospitalityNearbyPropertiesProps
 > = ({ id, heading, radius, limit, map, section, puck }) => {
   const streamDocument = useDocument<NearbyStreamDocument>();
+  const { t } = useTranslation();
   const locale = streamDocument.locale ?? "en";
   const { relativePrefixToRoot } = useTemplateProps<{
     relativePrefixToRoot?: string;
@@ -318,7 +322,10 @@ const BoutiqueHospitalityNearbyPropertiesComponent: PuckComponent<
                       ),
                     }}
                   >
-                    Loading nearby locations
+                    {t(
+                      "loadingNearbyLocations",
+                      "Loading nearby locations...",
+                    )}
                   </p>
                 ) : hasNearbyLocations ? (
                   <>
@@ -393,7 +400,10 @@ const BoutiqueHospitalityNearbyPropertiesComponent: PuckComponent<
                       ),
                     }}
                   >
-                    No nearby locations found for this location
+                    {pt(
+                      "noNearbyLocations",
+                      "No nearby locations found for this location",
+                    )}
                   </p>
                 ) : null}
               </div>

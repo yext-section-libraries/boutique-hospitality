@@ -25,8 +25,10 @@ import {
   type YextComponentConfig,
   type YextEntityField,
   type YextFields,
+  msg,
 } from "@yext/visual-editor";
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
+import { useTranslation } from "react-i18next";
 import { createCta } from "../shared/createCta";
 import { aspectRatioOptions } from "../shared/fieldOptions";
 
@@ -55,6 +57,11 @@ type ReviewItem = {
   reviewDate?: string;
 };
 
+const renderRatingStars = (rating?: number): string => {
+  const filledStars = Math.max(0, Math.min(5, Math.round(rating ?? 0)));
+  return `${"★".repeat(filledStars)}${"☆".repeat(5 - filledStars)}`;
+};
+
 type BoutiqueHospitalityHeroDocument = {
   locale?: string;
   ref_reviewsAgg?: {
@@ -79,122 +86,122 @@ type BoutiqueHospitalityHeroProps = {
 
 const HeroFields: YextFields<BoutiqueHospitalityHeroProps> = {
   section: {
-    label: "Section",
+    label: msg("fields.section", "Section"),
     type: "object",
     objectFields: {
       visibleOnLivePage: {
-        label: "Visible on Live Page",
+        label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
         type: "radio",
         options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
+          { label: msg("fields.options.yes", "Yes"), value: true },
+          { label: msg("fields.options.no", "No"), value: false },
         ],
       },
       backgroundColor: {
-        label: "Background Color",
+        label: msg("fields.backgroundColor", "Background Color"),
         type: "basicSelector",
         options: "BACKGROUND_COLOR",
       },
     },
   },
   availabilityBadge: {
-    label: "Availability Badge",
+    label: msg("fields.availabilityBadge", "Availability Badge"),
     type: "object",
     objectFields: {
       text: {
         type: "entityField",
-        label: "Text",
+        label: msg("fields.text", "Text"),
         filter: { types: ["type.string"] },
       },
-      styles: { label: "Text Styles", type: "styledText" },
+      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
       fontColor: {
-        label: "Font Color",
+        label: msg("fields.fontColor", "Font Color"),
         type: "basicSelector",
         options: "SITE_COLOR",
       },
     },
   },
   brandLine: {
-    label: "Brand Line",
+    label: msg("fields.brandLine", "Brand Line"),
     type: "object",
     objectFields: {
       text: {
         type: "entityField",
-        label: "Text",
+        label: msg("fields.text", "Text"),
         filter: { types: ["type.string"] },
       },
-      styles: { label: "Text Styles", type: "styledText" },
+      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
       fontColor: {
-        label: "Font Color",
+        label: msg("fields.fontColor", "Font Color"),
         type: "basicSelector",
         options: "SITE_COLOR",
       },
     },
   },
   placeLine: {
-    label: "Place Line",
+    label: msg("fields.placeLine", "Place Line"),
     type: "object",
     objectFields: {
       text: {
         type: "entityField",
-        label: "Text",
+        label: msg("fields.text", "Text"),
         filter: { types: ["type.string"] },
       },
-      styles: { label: "Text Styles", type: "styledText" },
+      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
       fontColor: {
-        label: "Font Color",
+        label: msg("fields.fontColor", "Font Color"),
         type: "basicSelector",
         options: "SITE_COLOR",
       },
     },
   },
   description: {
-    label: "Description",
+    label: msg("fields.description", "Description"),
     type: "object",
     objectFields: {
       text: {
         type: "entityField",
-        label: "Text",
+        label: msg("fields.text", "Text"),
         filter: { types: ["type.rich_text_v2"] },
       },
-      styles: { label: "Text Styles", type: "styledText" },
+      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
       fontColor: {
-        label: "Font Color",
+        label: msg("fields.fontColor", "Font Color"),
         type: "basicSelector",
         options: "SITE_COLOR",
       },
     },
   },
   heroImage: {
-    label: "Hero Image",
+    label: msg("fields.heroImage", "Hero Image"),
     type: "object",
     objectFields: {
       image: {
         type: "entityField",
-        label: "Image",
+        label: msg("fields.image", "Image"),
         filter: { types: ["type.image"] },
       },
       aspectRatio: {
-        label: "Aspect Ratio",
+        label: msg("fields.aspectRatio", "Aspect Ratio"),
         type: "basicSelector",
         options: aspectRatioOptions,
       },
       imageConstrain: {
-        label: "Image Constrain",
+        label: msg("fields.imageConstrain", "Image Constrain"),
         type: "select",
         options: [
-          { label: "Fixed", value: "fixed" },
-          { label: "Filled", value: "filled" },
+          { label: msg("fields.options.fixed", "Fixed"), value: "fixed" },
+          { label: msg("fields.options.filled", "Filled"), value: "filled" },
         ],
       },
     },
   },
   primaryCta: {
-    label: "Primary Call to Action",
+    label: msg("fields.primaryCallToAction", "Primary Call to Action"),
     type: "comprehensiveCTA",
   },
   secondaryCta: {
-    label: "Secondary Call to Action",
+    label: msg("fields.secondaryCallToAction", "Secondary Call to Action"),
     type: "comprehensiveCTA",
   },
 };
@@ -214,6 +221,7 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
   puck,
 }) => {
   const streamDocument = useDocument<BoutiqueHospitalityHeroDocument>();
+  const { t } = useTranslation();
   const locale = streamDocument.locale ?? "en";
   const resolvedHeroImage = resolveComponentData(
     heroImage.image,
@@ -632,11 +640,20 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
                   {reviews.length ? (
                     <div className="ybh-hero-rating">
                       <span>
-                        {averageRating?.toFixed?.(1) ?? averageRating} Stars
+                        {t("ratingInStars", {
+                          defaultValue: "{{rating}} Stars",
+                          rating:
+                            averageRating?.toFixed?.(1) ?? averageRating,
+                        })}
                       </span>
-                      <span className="ybh-hero-stars">★★★★★</span>
+                      <span className="ybh-hero-stars">
+                        {renderRatingStars(averageRating)}
+                      </span>
                       <span>
-                        {reviewCount.toLocaleString(locale)} guest reviews
+                        {t("guestReviews", {
+                          defaultValue: "{{count}} guest reviews",
+                          count: reviewCount,
+                        })}
                       </span>
                     </div>
                   ) : null}

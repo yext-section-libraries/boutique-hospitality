@@ -19,7 +19,9 @@ import {
   type YextComponentConfig,
   type YextEntityField,
   type YextFields,
+  msg,
 } from "@yext/visual-editor";
+import { useTranslation } from "react-i18next";
 import { getTextStyle } from "../shared/sectionStyles";
 
 type ReviewItem = {
@@ -27,6 +29,11 @@ type ReviewItem = {
   rating?: number;
   content?: string;
   reviewDate?: string;
+};
+
+const renderRatingStars = (rating?: number): string => {
+  const filledStars = Math.max(0, Math.min(5, Math.round(rating ?? 0)));
+  return `${"★".repeat(filledStars)}${"☆".repeat(5 - filledStars)}`;
 };
 
 type ReviewsDocument = {
@@ -73,40 +80,42 @@ const editorSampleReviews: ReviewItem[] = [
 
 const ReviewsFields: YextFields<BoutiqueHospitalityReviewsProps> = {
   section: {
-    label: "Section",
+    label: msg("fields.section", "Section"),
     type: "object",
     objectFields: {
       visibleOnLivePage: {
-        label: "Visible on Live Page",
+        label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
         type: "radio",
         options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
+          { label: msg("fields.options.yes", "Yes"), value: true },
+          { label: msg("fields.options.no", "No"), value: false },
         ],
       },
-      backgroundColor: { label: "Background Color", type: "basicSelector", options: "BACKGROUND_COLOR" },
-      cardBackgroundColor: { label: "Card Background Color", type: "basicSelector", options: "BACKGROUND_COLOR" },
+      backgroundColor: { label: msg("fields.backgroundColor", "Background Color"), type: "basicSelector", options: "BACKGROUND_COLOR" },
+      cardBackgroundColor: { label: msg("fields.cardBackgroundColor", "Card Background Color"), type: "basicSelector", options: "BACKGROUND_COLOR" },
     },
   },
   heading: {
-    label: "Heading",
+    label: msg("fields.heading", "Heading"),
     type: "object",
     objectFields: {
-      text: { type: "entityField", label: "Text", filter: { types: ["type.string"] } },
-      styles: { label: "Text Styles", type: "styledText" },
-      fontColor: { label: "Font Color", type: "basicSelector", options: "SITE_COLOR" },
+      text: { type: "entityField", label: msg("fields.text", "Text"), filter: { types: ["type.string"] } },
+      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
+      fontColor: { label: msg("fields.fontColor", "Font Color"), type: "basicSelector", options: "SITE_COLOR" },
     },
   },
 };
 
 const BoutiqueHospitalityReviewsComponent: PuckComponent<BoutiqueHospitalityReviewsProps> = ({ id, section, heading, puck }) => {
   const streamDocument = useDocument<ReviewsDocument>();
+  const { t } = useTranslation();
   const locale = streamDocument.locale ?? "en";
   const resolvedHeading = resolveComponentData(heading.text, locale, streamDocument, { output: "plainText" }) || "";
   const { averageRating, reviewCount } = getAggregateRating(streamDocument);
   const firstPartyAggregate = streamDocument.ref_reviewsAgg?.find((aggregate) => aggregate.publisher === "FIRSTPARTY");
   const reviews = firstPartyAggregate?.topReviews ?? [];
   const visibleReviews = reviews.length ? reviews : puck.isEditing ? editorSampleReviews : [];
+  const displayedAverageRating = reviews.length ? (averageRating ?? 0) : 4.8;
   const headingColor =
     getThemeColorCssValue(heading.fontColor) ??
     getThemeColorCssValue(getDefaultForegroundColor(section.backgroundColor, streamDocument));
@@ -201,14 +210,15 @@ const BoutiqueHospitalityReviewsComponent: PuckComponent<BoutiqueHospitalityRevi
               </div>
               {visibleReviews.length ? (
                 <div style={{ color: sectionTextColor }}>
-                  <strong>
-                    {reviews.length
-                      ? (averageRating?.toFixed?.(1) ?? averageRating)
-                      : "4.8"}
-                  </strong>{" "}
-                  ★★★★★ from{" "}
-                  {reviews.length ? reviewCount : visibleReviews.length} guest
-                  reviews
+                  {t("ratingFromGuestReviews", {
+                    defaultValue:
+                      "{{rating}} {{stars}} from {{count}} guest reviews",
+                    rating: displayedAverageRating.toFixed(1),
+                    stars: renderRatingStars(displayedAverageRating),
+                    count: reviews.length
+                      ? reviewCount
+                      : visibleReviews.length,
+                  })}
                 </div>
               ) : null}
             </div>

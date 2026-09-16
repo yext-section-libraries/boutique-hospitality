@@ -27,6 +27,7 @@ import {
   type YextComponentConfig,
   type YextEntityField,
   type YextFields,
+  msg,
 } from "@yext/visual-editor";
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
 import { getTextStyle, renderRichText } from "../shared/sectionStyles";
@@ -192,48 +193,48 @@ type BoutiqueHospitalityBlogProps = {
 
 const BlogFields: YextFields<BoutiqueHospitalityBlogProps> = {
   section: {
-    label: "Section",
+    label: msg("fields.section", "Section"),
     type: "object",
     objectFields: {
       visibleOnLivePage: {
-        label: "Visible on Live Page",
+        label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
         type: "radio",
         options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
+          { label: msg("fields.options.yes", "Yes"), value: true },
+          { label: msg("fields.options.no", "No"), value: false },
         ],
       },
       backgroundColor: {
-        label: "Background Color",
+        label: msg("fields.backgroundColor", "Background Color"),
         type: "basicSelector",
         options: "BACKGROUND_COLOR",
       },
       cardBackgroundColor: {
-        label: "Card Background Color",
+        label: msg("fields.cardBackgroundColor", "Card Background Color"),
         type: "basicSelector",
         options: "BACKGROUND_COLOR",
       },
     },
   },
   heading: {
-    label: "Heading",
+    label: msg("fields.heading", "Heading"),
     type: "object",
     objectFields: {
       text: {
         type: "entityField",
-        label: "Text",
+        label: msg("fields.text", "Text"),
         filter: { types: ["type.string"] },
       },
-      styles: { label: "Text Styles", type: "styledText" },
+      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
       fontColor: {
-        label: "Font Color",
+        label: msg("fields.fontColor", "Font Color"),
         type: "basicSelector",
         options: "SITE_COLOR",
       },
     },
   },
   cards: {
-    label: "Cards",
+    label: msg("fields.cards", "Cards"),
     type: "object",
     objectFields: {
       data: {
@@ -241,53 +242,53 @@ const BlogFields: YextFields<BoutiqueHospitalityBlogProps> = {
         label: "Data",
       },
       styles: {
-        label: "Styles",
+        label: msg("fields.styles", "Styles"),
         type: "object",
         objectFields: {
           title: {
-            label: "Title",
+            label: msg("fields.title", "Title"),
             type: "object",
             objectFields: {
-              styles: { label: "Text Styles", type: "styledText" },
+              styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
               fontColor: {
-                label: "Font Color",
+                label: msg("fields.fontColor", "Font Color"),
                 type: "basicSelector",
                 options: "SITE_COLOR",
               },
             },
           },
           description: {
-            label: "Description",
+            label: msg("fields.description", "Description"),
             type: "object",
             objectFields: {
-              styles: { label: "Text Styles", type: "styledText" },
+              styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
               fontColor: {
-                label: "Font Color",
+                label: msg("fields.fontColor", "Font Color"),
                 type: "basicSelector",
                 options: "SITE_COLOR",
               },
             },
           },
           cta: {
-            label: "CTA",
+            label: msg("fields.cta", "CTA"),
             type: "object",
             objectFields: {
               variant: {
-                label: "Variant",
+                label: msg("fields.variant", "Variant"),
                 type: "radio",
                 options: [
-                  { label: "Primary", value: "primary" },
-                  { label: "Secondary", value: "secondary" },
-                  { label: "Link", value: "link" },
+                  { label: msg("fields.options.primary", "Primary"), value: "primary" },
+                  { label: msg("fields.options.secondary", "Secondary"), value: "secondary" },
+                  { label: msg("fields.options.link", "Link"), value: "link" },
                 ],
               },
               color: {
-                label: "Color",
+                label: msg("fields.color", "Color"),
                 type: "basicSelector",
                 options: "SITE_COLOR",
               },
-              button: { label: "Button Styles", type: "styledButton" },
-              link: { label: "Link Styles", type: "styledLink" },
+              button: { label: msg("fields.buttonStyles", "Button Styles"), type: "styledButton" },
+              link: { label: msg("fields.linkStyles", "Link Styles"), type: "styledLink" },
             },
           },
         },
