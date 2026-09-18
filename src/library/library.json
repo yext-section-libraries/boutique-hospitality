@@ -1,6 +1,33 @@
 {
   "schemaVersion": 1,
-  "id": "boutique-hospitality",
+  "id": "yext_boutique-hospitality",
   "displayName": "Boutique Hospitality",
-  "description": ""
+  "description": "",
+  "locales": [
+    "cs",
+    "da",
+    "de",
+    "en",
+    "en-GB",
+    "es",
+    "et",
+    "fi",
+    "fr",
+    "hr",
+    "hu",
+    "it",
+    "ja",
+    "lt",
+    "lv",
+    "nb",
+    "nl",
+    "pl",
+    "pt",
+    "ro",
+    "sk",
+    "sv",
+    "tr",
+    "zh",
+    "zh-TW"
+  ]
 }

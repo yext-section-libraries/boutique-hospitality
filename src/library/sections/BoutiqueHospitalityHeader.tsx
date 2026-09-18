@@ -30,13 +30,15 @@ import {
   getAnalyticsScopeHash,
   getSurfaceColorStyle,
   getThemeColorCssValue,
-  i18nComponentsInstance,
+  i18nPageInstance,
   normalizeLink,
   resolveComponentData,
   useDocument,
+  msg,
 } from "@yext/visual-editor";
 import { aspectRatioOptions } from "../shared/fieldOptions";
 import { hasExplicitThemeColor } from "../shared/sectionStyles";
+import { useTranslation } from "react-i18next";
 
 type SharedHeaderVariant =
   | "centerLogoSplitNav"
@@ -171,8 +173,7 @@ const getTextStyles = ({
     color: getThemeColorCssValue(color),
     fontFamily: styles.fontFamily === "default" ? undefined : styles.fontFamily,
     fontSize: styles.fontSize === "default" ? undefined : styles.fontSize,
-    fontWeight:
-      styles.fontWeight === "default" ? undefined : styles.fontWeight,
+    fontWeight: styles.fontWeight === "default" ? undefined : styles.fontWeight,
     fontStyle: styles.fontStyle === "default" ? undefined : styles.fontStyle,
     textTransform:
       styles.textTransform === "default" ? undefined : styles.textTransform,
@@ -194,11 +195,9 @@ const getTranslatableSummary = (
   }
 
   return (
-    resolveComponentData(
-      value,
-      i18nComponentsInstance.language,
-      undefined,
-    ) || value.defaultValue || fallback
+    resolveComponentData(value, i18nPageInstance.language, undefined) ||
+    value.defaultValue ||
+    fallback
   );
 };
 
@@ -271,309 +270,313 @@ const SharedHeaderDefaultUtilityIcon = () => (
   </svg>
 );
 
-const BoutiqueHospitalityHeaderFields: YextFields<BoutiqueHospitalityHeaderProps> = {
-  section: {
-    label: "Section",
-    type: "object",
-    objectFields: {
-      visibleOnLivePage: {
-        label: "Visible on Live Page",
-        type: "radio",
-        options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
-        ],
-      },
-      backgroundColor: {
-        label: "Background Color",
-        type: "basicSelector",
-        options: "BACKGROUND_COLOR",
-      },
-      dividerColor: {
-        label: "Divider Color",
-        type: "basicSelector",
-        options: "SITE_COLOR",
-      },
-    },
-  },
-  variant: {
-    label: "Variant",
-    type: "select",
-    options: [
-      { label: "Centered Logo Split Nav", value: "centerLogoSplitNav" },
-      { label: "Logo Left Inline Nav", value: "logoLeftInlineNav" },
-      { label: "Stacked Nav Below", value: "stackedNavBelow" },
-      { label: "Utility Top Row", value: "utilityTopRow" },
-    ],
-  },
-  navigation: {
-    label: "Navigation",
-    type: "object",
-    objectFields: {
-      show: {
-        label: "Show Navigation",
-        type: "radio",
-        options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
-        ],
-      },
-      links: {
-        label: "Links",
-        type: "array",
-        arrayFields: {
-          label: {
-            label: "Label",
-            type: "translatableString",
-          },
-          link: {
-            label: "Link",
-            type: "translatableString",
-          },
-          linkType: {
-            label: "Link Type",
-            type: "select",
-            options: linkTypeOptions,
-          },
-          normalizeLink: {
-            label: "Normalize Link",
-            type: "radio",
-            options: [
-              { label: "Yes", value: true },
-              { label: "No", value: false },
-            ],
-          },
-          openInNewTab: {
-            label: "Open in New Tab",
-            type: "radio",
-            options: [
-              { label: "Yes", value: true },
-              { label: "No", value: false },
-            ],
-          },
+const BoutiqueHospitalityHeaderFields: YextFields<BoutiqueHospitalityHeaderProps> =
+  {
+    section: {
+      label: msg("fields.section", "Section"),
+      type: "object",
+      objectFields: {
+        visibleOnLivePage: {
+          label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
+          type: "radio",
+          options: [
+            { label: msg("fields.options.yes", "Yes"), value: true },
+            { label: msg("fields.options.no", "No"), value: false },
+          ],
         },
-        defaultItemProps: (index: number) => ({
-          label: `Link ${index + 1}`,
-          link: "#",
-          linkType: "URL",
-          normalizeLink: false,
-          openInNewTab: false,
-        }),
-        getItemSummary: (item: SharedHeaderLink, index?: number) =>
-          getTranslatableSummary(item.label, `Link ${index ?? 0}`),
-      },
-      fontColor: {
-        label: "Font Color",
-        type: "basicSelector",
-        options: "SITE_COLOR",
-      },
-      styles: {
-        label: "Link Styles",
-        type: "styledLink",
-        showIncludeCaretField: false,
+        backgroundColor: {
+          label: msg("fields.backgroundColor", "Background Color"),
+          type: "basicSelector",
+          options: "BACKGROUND_COLOR",
+        },
+        dividerColor: {
+          label: msg("fields.dividerColor", "Divider Color"),
+          type: "basicSelector",
+          options: "SITE_COLOR",
+        },
       },
     },
-  },
-  utilities: {
-    label: "Utility Icons",
-    type: "object",
-    objectFields: {
-      show: {
-        label: "Show Utility Links",
-        type: "radio",
-        options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
-        ],
+    variant: {
+      label: msg("fields.variant", "Variant"),
+      type: "select",
+      options: [
+        { label: msg("fields.options.centeredLogoSplitNav", "Centered Logo Split Nav"), value: "centerLogoSplitNav" },
+        { label: msg("fields.options.logoLeftInlineNav", "Logo Left Inline Nav"), value: "logoLeftInlineNav" },
+        { label: msg("fields.options.stackedNavBelow", "Stacked Nav Below"), value: "stackedNavBelow" },
+        { label: msg("fields.options.utilityTopRow", "Utility Top Row"), value: "utilityTopRow" },
+      ],
+    },
+    navigation: {
+      label: msg("fields.navigation", "Navigation"),
+      type: "object",
+      objectFields: {
+        show: {
+          label: msg("fields.showNavigation", "Show Navigation"),
+          type: "radio",
+          options: [
+            { label: msg("fields.options.yes", "Yes"), value: true },
+            { label: msg("fields.options.no", "No"), value: false },
+          ],
+        },
+        links: {
+          label: msg("fields.links", "Links"),
+          type: "array",
+          arrayFields: {
+            label: {
+              label: msg("fields.label", "Label"),
+              type: "translatableString",
+            },
+            link: {
+              label: msg("fields.link", "Link"),
+              type: "translatableString",
+            },
+            linkType: {
+              label: msg("fields.linkType", "Link Type"),
+              type: "select",
+              options: linkTypeOptions,
+            },
+            normalizeLink: {
+              label: msg("fields.normalizeLink", "Normalize Link"),
+              type: "radio",
+              options: [
+                { label: msg("fields.options.yes", "Yes"), value: true },
+                { label: msg("fields.options.no", "No"), value: false },
+              ],
+            },
+            openInNewTab: {
+              label: msg("fields.openInNewTab", "Open in New Tab"),
+              type: "radio",
+              options: [
+                { label: msg("fields.options.yes", "Yes"), value: true },
+                { label: msg("fields.options.no", "No"), value: false },
+              ],
+            },
+          },
+          defaultItemProps: (index: number) => ({
+            label: `Link ${index + 1}`,
+            link: "#",
+            linkType: "URL",
+            normalizeLink: false,
+            openInNewTab: false,
+          }),
+          getItemSummary: (item: SharedHeaderLink, index?: number) =>
+            getTranslatableSummary(item.label, `Link ${index ?? 0}`),
+        },
+        fontColor: {
+          label: msg("fields.fontColor", "Font Color"),
+          type: "basicSelector",
+          options: "SITE_COLOR",
+        },
+        styles: {
+          label: msg("fields.linkStyles", "Link Styles"),
+          type: "styledLink",
+          showIncludeCaretField: false,
+        },
       },
-      items: {
-        label: "Items",
-        type: "array",
-        arrayFields: {
-          iconImage: {
-            label: "Icon Image",
-            type: "object",
-            objectFields: {
-              image: {
-                type: "entityField",
-                label: "Image",
-                filter: {
-                  types: ["type.image"],
+    },
+    utilities: {
+      label: msg("fields.utilityIcons", "Utility Icons"),
+      type: "object",
+      objectFields: {
+        show: {
+          label: msg("fields.showUtilityLinks", "Show Utility Links"),
+          type: "radio",
+          options: [
+            { label: msg("fields.options.yes", "Yes"), value: true },
+            { label: msg("fields.options.no", "No"), value: false },
+          ],
+        },
+        items: {
+          label: msg("fields.items", "Items"),
+          type: "array",
+          arrayFields: {
+            iconImage: {
+              label: msg("fields.iconImage", "Icon Image"),
+              type: "object",
+              objectFields: {
+                image: {
+                  type: "entityField",
+                  label: msg("fields.image", "Image"),
+                  filter: {
+                    types: ["type.image"],
+                  },
+                },
+                aspectRatio: {
+                  label: msg("fields.aspectRatio", "Aspect Ratio"),
+                  type: "basicSelector",
+                  options: aspectRatioOptions,
+                },
+                imageConstrain: {
+                  label: msg("fields.imageConstrain", "Image Constrain"),
+                  type: "select",
+                  options: [
+                    { label: msg("fields.options.fixed", "Fixed"), value: "fixed" },
+                    { label: msg("fields.options.filled", "Filled"), value: "filled" },
+                  ],
+                },
+                styles: {
+                  label: msg("fields.imageStyles", "Image Styles"),
+                  type: "styledImage",
                 },
               },
-              aspectRatio: {
-                label: "Aspect Ratio",
-                type: "basicSelector",
-                options: aspectRatioOptions,
-              },
-              imageConstrain: {
-                label: "Image Constrain",
-                type: "select",
-                options: [
-                  { label: "Fixed", value: "fixed" },
-                  { label: "Filled", value: "filled" },
-                ],
+            },
+            label: {
+              label: msg("fields.label", "Label"),
+              type: "translatableString",
+            },
+            link: {
+              label: msg("fields.link", "Link"),
+              type: "translatableString",
+            },
+            linkType: {
+              label: msg("fields.linkType", "Link Type"),
+              type: "select",
+              options: linkTypeOptions,
+            },
+            normalizeLink: {
+              label: msg("fields.normalizeLink", "Normalize Link"),
+              type: "radio",
+              options: [
+                { label: msg("fields.options.yes", "Yes"), value: true },
+                { label: msg("fields.options.no", "No"), value: false },
+              ],
+            },
+            openInNewTab: {
+              label: msg("fields.openInNewTab", "Open in New Tab"),
+              type: "radio",
+              options: [
+                { label: msg("fields.options.yes", "Yes"), value: true },
+                { label: msg("fields.options.no", "No"), value: false },
+              ],
+            },
+          },
+          defaultItemProps: (index: number) => ({
+            iconImage: defaultUtilityIconImage,
+            label: `Item ${index + 1}`,
+            link: "#",
+            linkType: "URL",
+            normalizeLink: false,
+            openInNewTab: false,
+          }),
+          getItemSummary: (item: SharedHeaderAction, index?: number) =>
+            getTranslatableSummary(item.label, `Action ${index ?? 0}`),
+        },
+      },
+    },
+    cta: {
+      label: msg("fields.callToActions", "Call to Actions"),
+      type: "object",
+      objectFields: {
+        show: {
+          label: msg("fields.showCta", "Show CTA"),
+          type: "radio",
+          options: [
+            { label: msg("fields.options.yes", "Yes"), value: true },
+            { label: msg("fields.options.no", "No"), value: false },
+          ],
+        },
+        items: {
+          label: msg("fields.items", "Items"),
+          type: "array",
+          arrayFields: {
+            cta: {
+              label: msg("fields.cta", "CTA"),
+              type: "comprehensiveCTA",
+            },
+          },
+          defaultItemProps: {
+            cta: {
+              data: {
+                actionType: "link",
+                cta: {
+                  field: "",
+                  constantValueEnabled: true,
+                  constantValue: {
+                    ctaType: "textAndLink",
+                    label: { defaultValue: "CTA Label" },
+                    link: { defaultValue: "#" },
+                    linkType: "URL",
+                  },
+                  selectedType: "textAndLink",
+                },
+                openInNewTab: false,
+                buttonText: { defaultValue: "Button" },
+                customId: "",
+                customClass: "",
+                dataAttributes: [],
+                ariaLabel: { defaultValue: "CTA Label" },
               },
               styles: {
-                label: "Image Styles",
-                type: "styledImage",
+                variant: "primary",
+                button: defaultButtonStyles,
+                link: defaultLinkStyles,
               },
             },
           },
-          label: {
-            label: "Label",
-            type: "translatableString",
-          },
-          link: {
-            label: "Link",
-            type: "translatableString",
-          },
-          linkType: {
-            label: "Link Type",
-            type: "select",
-            options: linkTypeOptions,
-          },
-          normalizeLink: {
-            label: "Normalize Link",
-            type: "radio",
-            options: [
-              { label: "Yes", value: true },
-              { label: "No", value: false },
-            ],
-          },
-          openInNewTab: {
-            label: "Open in New Tab",
-            type: "radio",
-            options: [
-              { label: "Yes", value: true },
-              { label: "No", value: false },
-            ],
-          },
+          getItemSummary: (
+            item: { cta?: ComprehensiveCTAValue },
+            index?: number,
+          ) =>
+            getTranslatableSummary(
+              item.cta?.data?.cta?.constantValue?.label,
+              `CTA ${index ?? 0}`,
+            ),
         },
-        defaultItemProps: (index: number) => ({
-          iconImage: defaultUtilityIconImage,
-          label: `Item ${index + 1}`,
-          link: "#",
-          linkType: "URL",
-          normalizeLink: false,
-          openInNewTab: false,
-        }),
-        getItemSummary: (item: SharedHeaderAction, index?: number) =>
-          getTranslatableSummary(item.label, `Action ${index ?? 0}`),
       },
     },
-  },
-  cta: {
-    label: "Call to Actions",
-    type: "object",
-    objectFields: {
-      show: {
-        label: "Show CTA",
-        type: "radio",
-        options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
-        ],
-      },
-      items: {
-        label: "Items",
-        type: "array",
-        arrayFields: {
-          cta: {
-            label: "CTA",
-            type: "comprehensiveCTA",
+    logoImage: {
+      label: msg("fields.logoImage", "Logo Image"),
+      type: "object",
+      objectFields: {
+        show: {
+          label: msg("fields.showLogo", "Show Logo"),
+          type: "radio",
+          options: [
+            { label: msg("fields.options.yes", "Yes"), value: true },
+            { label: msg("fields.options.no", "No"), value: false },
+          ],
+        },
+        image: {
+          type: "entityField",
+          label: msg("fields.image", "Image"),
+          filter: {
+            types: ["type.image"],
           },
         },
-        defaultItemProps: {
-          cta: {
-            data: {
-              actionType: "link",
-              cta: {
-                field: "",
-                constantValueEnabled: true,
-                constantValue: {
-                  ctaType: "textAndLink",
-                  label: { defaultValue: "CTA Label" },
-                  link: { defaultValue: "#" },
-                  linkType: "URL",
-                },
-                selectedType: "textAndLink",
-              },
-              openInNewTab: false,
-              buttonText: { defaultValue: "Button" },
-              customId: "",
-              customClass: "",
-              dataAttributes: [],
-              ariaLabel: { defaultValue: "CTA Label" },
-            },
-            styles: {
-              variant: "primary",
-              button: defaultButtonStyles,
-              link: defaultLinkStyles,
-            },
+        url: {
+          label: msg("fields.url", "URL"),
+          type: "entityField",
+          filter: {
+            types: ["type.string"],
           },
         },
-        getItemSummary: (
-          item: { cta?: ComprehensiveCTAValue },
-          index?: number,
-        ) =>
-          getTranslatableSummary(
-            item.cta?.data?.cta?.constantValue?.label,
-            `CTA ${index ?? 0}`,
-          ),
-      },
-    },
-  },
-  logoImage: {
-    label: "Logo Image",
-    type: "object",
-    objectFields: {
-      show: {
-        label: "Show Logo",
-        type: "radio",
-        options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
-        ],
-      },
-      image: {
-        type: "entityField",
-        label: "Image",
-        filter: {
-          types: ["type.image"],
+        aspectRatio: {
+          label: msg("fields.aspectRatio", "Aspect Ratio"),
+          type: "basicSelector",
+          options: aspectRatioOptions,
+        },
+        imageConstrain: {
+          label: msg("fields.imageConstrain", "Image Constrain"),
+          type: "select",
+          options: [
+            { label: msg("fields.options.fixed", "Fixed"), value: "fixed" },
+            { label: msg("fields.options.filled", "Filled"), value: "filled" },
+          ],
+        },
+        styles: {
+          label: msg("fields.imageStyles", "Image Styles"),
+          type: "styledImage",
         },
       },
-      url: {
-        label: "URL",
-        type: "entityField",
-        filter: {
-          types: ["type.string"],
-        },
-      },
-      aspectRatio: {
-        label: "Aspect Ratio",
-        type: "basicSelector",
-        options: aspectRatioOptions,
-      },
-      imageConstrain: {
-        label: "Image Constrain",
-        type: "select",
-        options: [
-          { label: "Fixed", value: "fixed" },
-          { label: "Filled", value: "filled" },
-        ],
-      },
-      styles: {
-        label: "Image Styles",
-        type: "styledImage",
-      },
     },
-  },
-};
+  };
 
-const BoutiqueHospitalityHeaderComponent: PuckComponent<BoutiqueHospitalityHeaderProps> = (props) => {
+const BoutiqueHospitalityHeaderComponent: PuckComponent<
+  BoutiqueHospitalityHeaderProps
+> = (props) => {
   const analytics = useAnalytics();
   const streamDocument = useDocument<StreamDocument>();
+  const { t } = useTranslation();
   const locale = streamDocument.locale ?? "en";
   const [menuOpen, setMenuOpen] = React.useState(false);
 
@@ -583,11 +586,7 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<BoutiqueHospitalityHeade
     streamDocument,
   ) as ImageType | ComplexImageType | TranslatableAssetImage | undefined;
   const resolvedLogoUrl = (
-    resolveComponentData(
-      props.logoImage.url,
-      locale,
-      streamDocument,
-    ) || ""
+    resolveComponentData(props.logoImage.url, locale, streamDocument) || ""
   )
     .toString()
     .trim();
@@ -698,7 +697,9 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<BoutiqueHospitalityHeade
     }
 
     const resolvedIconImage = iconImage as
-      ImageType | ComplexImageType | TranslatableAssetImage;
+      | ImageType
+      | ComplexImageType
+      | TranslatableAssetImage;
     const iconHeight = 32;
     const iconAspectRatio =
       iconImageProps.aspectRatio > 0 ? iconImageProps.aspectRatio : 1;
@@ -798,7 +799,7 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<BoutiqueHospitalityHeade
   );
 
   const renderNavigationLinks = (orientation: "row" | "column") => (
-    <nav aria-label="Primary navigation">
+    <nav aria-label={t("primaryNavigation", "Primary Navigation")}>
       <ul
         className={
           orientation === "row"
@@ -844,7 +845,9 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<BoutiqueHospitalityHeade
           <Image
             image={
               resolvedLogoImage as
-                ImageType | ComplexImageType | TranslatableAssetImage
+                | ImageType
+                | ComplexImageType
+                | TranslatableAssetImage
             }
             className="h-full w-full"
             style={logoStyle}
@@ -991,7 +994,11 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<BoutiqueHospitalityHeade
               setMenuOpen((currentValue) => !currentValue);
             }}
             aria-expanded={menuOpen}
-            aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-label={
+              menuOpen
+                ? t("closeNavigationMenu", "Close navigation menu")
+                : t("openNavigationMenu", "Open navigation menu")
+            }
             className="inline-flex h-10 w-10 items-center justify-center rounded-full"
             style={{
               color: getThemeColorCssValue(navigationColor),
@@ -1023,7 +1030,9 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<BoutiqueHospitalityHeade
             style={headerSurfaceStyle}
           >
             <div className="space-y-6">
-              {navigationLinks.length > 0 ? renderNavigationLinks("column") : null}
+              {navigationLinks.length > 0
+                ? renderNavigationLinks("column")
+                : null}
               {((showUtilities && utilityLinks.length > 0) || showCta) && (
                 <div
                   className="border-t border-current/10 pt-6"
@@ -1088,7 +1097,11 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<BoutiqueHospitalityHeade
                           }}
                           eventName={`${item.eventName}Mobile`}
                           target={item.openInNewTab ? "_blank" : undefined}
-                          rel={item.openInNewTab ? "noopener noreferrer" : undefined}
+                          rel={
+                            item.openInNewTab
+                              ? "noopener noreferrer"
+                              : undefined
+                          }
                           aria-label={item.label}
                           className="inline-flex h-8 shrink-0 items-center justify-center rounded-full transition-opacity hover:opacity-80"
                           style={{
@@ -1115,154 +1128,155 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<BoutiqueHospitalityHeade
   );
 };
 
-export const BoutiqueHospitalityHeader: YextComponentConfig<BoutiqueHospitalityHeaderProps> = {
-  label: "Header",
-  fields: BoutiqueHospitalityHeaderFields,
-  defaultProps: {
-    section: {
-      visibleOnLivePage: true,
-      backgroundColor: {
-        selectedColor: "palette-tertiary",
-        contrastingColor: "palette-tertiary-contrast",
+export const BoutiqueHospitalityHeader: YextComponentConfig<BoutiqueHospitalityHeaderProps> =
+  {
+    label: "Header",
+    fields: BoutiqueHospitalityHeaderFields,
+    defaultProps: {
+      section: {
+        visibleOnLivePage: true,
+        backgroundColor: {
+          selectedColor: "palette-tertiary",
+          contrastingColor: "palette-tertiary-contrast",
+        },
+        dividerColor: undefined,
       },
-      dividerColor: undefined,
-    },
-    variant: "logoLeftInlineNav",
-    navigation: {
-      show: true,
-      links: [
-        {
-          label: "Rooms",
-          link: "#",
-          linkType: "URL",
-          normalizeLink: false,
-          openInNewTab: false,
-        },
-        {
-          label: "Amenities & Dining",
-          link: "#",
-          linkType: "URL",
-          normalizeLink: false,
-          openInNewTab: false,
-        },
-        {
-          label: "Offers",
-          link: "#",
-          linkType: "URL",
-          normalizeLink: false,
-          openInNewTab: false,
-        },
-        {
-          label: "Locations",
-          link: "#",
-          linkType: "URL",
-          normalizeLink: false,
-          openInNewTab: false,
-        },
-        {
-          label: "Rewards",
-          link: "#",
-          linkType: "URL",
-          normalizeLink: false,
-          openInNewTab: false,
-        },
-      ],
-      styles: defaultLinkStyles,
-    },
-    utilities: {
-      show: true,
-      items: [
-        {
-          iconImage: defaultUtilityIconImage,
-          label: "Item 1",
-          link: "#",
-          linkType: "URL",
-          normalizeLink: false,
-          openInNewTab: false,
-        },
-        {
-          iconImage: defaultUtilityIconImage,
-          label: "Item 2",
-          link: "#",
-          linkType: "URL",
-          normalizeLink: false,
-          openInNewTab: false,
-        },
-        {
-          iconImage: defaultUtilityIconImage,
-          label: "Item 3",
-          link: "#",
-          linkType: "URL",
-          normalizeLink: false,
-          openInNewTab: false,
-        },
-      ],
-    },
-    cta: {
-      show: true,
-      items: [
-        {
-          cta: {
-            data: {
-              actionType: "link",
-              cta: {
-                field: "",
-                constantValueEnabled: true,
-                constantValue: {
-                  ctaType: "textAndLink",
-                  label: { defaultValue: "Check Availability" },
-                  link: { defaultValue: "#" },
-                  linkType: "URL",
+      variant: "logoLeftInlineNav",
+      navigation: {
+        show: true,
+        links: [
+          {
+            label: "Rooms",
+            link: "#",
+            linkType: "URL",
+            normalizeLink: false,
+            openInNewTab: false,
+          },
+          {
+            label: "Amenities & Dining",
+            link: "#",
+            linkType: "URL",
+            normalizeLink: false,
+            openInNewTab: false,
+          },
+          {
+            label: "Offers",
+            link: "#",
+            linkType: "URL",
+            normalizeLink: false,
+            openInNewTab: false,
+          },
+          {
+            label: "Locations",
+            link: "#",
+            linkType: "URL",
+            normalizeLink: false,
+            openInNewTab: false,
+          },
+          {
+            label: "Rewards",
+            link: "#",
+            linkType: "URL",
+            normalizeLink: false,
+            openInNewTab: false,
+          },
+        ],
+        styles: defaultLinkStyles,
+      },
+      utilities: {
+        show: true,
+        items: [
+          {
+            iconImage: defaultUtilityIconImage,
+            label: "Item 1",
+            link: "#",
+            linkType: "URL",
+            normalizeLink: false,
+            openInNewTab: false,
+          },
+          {
+            iconImage: defaultUtilityIconImage,
+            label: "Item 2",
+            link: "#",
+            linkType: "URL",
+            normalizeLink: false,
+            openInNewTab: false,
+          },
+          {
+            iconImage: defaultUtilityIconImage,
+            label: "Item 3",
+            link: "#",
+            linkType: "URL",
+            normalizeLink: false,
+            openInNewTab: false,
+          },
+        ],
+      },
+      cta: {
+        show: true,
+        items: [
+          {
+            cta: {
+              data: {
+                actionType: "link",
+                cta: {
+                  field: "",
+                  constantValueEnabled: true,
+                  constantValue: {
+                    ctaType: "textAndLink",
+                    label: { defaultValue: "Check Availability" },
+                    link: { defaultValue: "#" },
+                    linkType: "URL",
+                  },
+                  selectedType: "textAndLink",
                 },
-                selectedType: "textAndLink",
+                openInNewTab: false,
+                buttonText: { defaultValue: "Button" },
+                customId: "",
+                customClass: "",
+                dataAttributes: [],
+                ariaLabel: { defaultValue: "Check Availability" },
               },
-              openInNewTab: false,
-              buttonText: { defaultValue: "Button" },
-              customId: "",
-              customClass: "",
-              dataAttributes: [],
-              ariaLabel: { defaultValue: "Check Availability" },
-            },
-            styles: {
-              variant: "primary",
-              button: defaultButtonStyles,
-              link: defaultLinkStyles,
+              styles: {
+                variant: "primary",
+                button: defaultButtonStyles,
+                link: defaultLinkStyles,
+              },
             },
           },
-        },
-      ],
-    },
-    logoImage: {
-      show: true,
-      image: {
-        field: "",
-        constantValueEnabled: true,
-        constantValue: {
-          url: "",
-          width: 0,
-          height: 0,
-        },
+        ],
       },
-      url: {
-        field: "",
-        constantValue: {
-          defaultValue: "",
+      logoImage: {
+        show: true,
+        image: {
+          field: "",
+          constantValueEnabled: true,
+          constantValue: {
+            url: "",
+            width: 0,
+            height: 0,
+          },
         },
-        constantValueEnabled: true,
+        url: {
+          field: "",
+          constantValue: {
+            defaultValue: "",
+          },
+          constantValueEnabled: true,
+        },
+        aspectRatio: 1,
+        imageConstrain: "fixed",
+        styles: defaultImageStyles,
       },
-      aspectRatio: 1,
-      imageConstrain: "fixed",
-      styles: defaultImageStyles,
     },
-  },
-  render: (props) => (
-    <AnalyticsScopeProvider
-      name={`BoutiqueHospitalityHeader${getAnalyticsScopeHash(props.id)}`}
-    >
-      <BoutiqueHospitalityHeaderComponent {...props} />
-    </AnalyticsScopeProvider>
-  ),
-};
+    render: (props) => (
+      <AnalyticsScopeProvider
+        name={`BoutiqueHospitalityHeader${getAnalyticsScopeHash(props.id)}`}
+      >
+        <BoutiqueHospitalityHeaderComponent {...props} />
+      </AnalyticsScopeProvider>
+    ),
+  };
 
 export const config: SectionConfig = {
   id: "BoutiqueHospitalityHeader",

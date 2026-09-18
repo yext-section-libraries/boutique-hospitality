@@ -8,8 +8,10 @@ import {
   HoursTable,
   Link,
   type AddressType,
+  type HoursTableIntervalTranslations,
   type HoursType,
 } from "@yext/pages-components";
+import { useTranslation } from "react-i18next";
 import {
   Background,
   ComprehensiveCTA,
@@ -32,6 +34,7 @@ import {
   type YextComponentConfig,
   type YextEntityField,
   type YextFields,
+  msg,
 } from "@yext/visual-editor";
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
 import { formatPhoneNumber } from "@yext/visual-editor/section-library-support";
@@ -127,114 +130,114 @@ type BoutiqueHospitalityInfoPanelsProps = {
 
 const InfoPanelsFields: YextFields<BoutiqueHospitalityInfoPanelsProps> = {
   section: {
-    label: "Section",
+    label: msg("fields.section", "Section"),
     type: "object",
     objectFields: {
       visibleOnLivePage: {
-        label: "Visible on Live Page",
+        label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
         type: "radio",
         options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
+          { label: msg("fields.options.yes", "Yes"), value: true },
+          { label: msg("fields.options.no", "No"), value: false },
         ],
       },
       backgroundColor: {
-        label: "Background Color",
+        label: msg("fields.backgroundColor", "Background Color"),
         type: "basicSelector",
         options: "BACKGROUND_COLOR",
       },
       panelBackgroundColor: {
-        label: "Panel Background Color",
+        label: msg("fields.panelBackgroundColor", "Panel Background Color"),
         type: "basicSelector",
         options: "BACKGROUND_COLOR",
       },
     },
   },
   summaryCard: {
-    label: "Summary Card",
+    label: msg("fields.summaryCard", "Summary Card"),
     type: "object",
     objectFields: {
       heading: {
-        label: "Heading",
+        label: msg("fields.heading", "Heading"),
         type: "object",
         objectFields: {
           text: {
             type: "entityField",
-            label: "Text",
+            label: msg("fields.text", "Text"),
             filter: { types: ["type.string"] },
           },
         },
       },
       image: {
-        label: "Image",
+        label: msg("fields.image", "Image"),
         type: "object",
         objectFields: {
           image: {
             type: "entityField",
-            label: "Image",
+            label: msg("fields.image", "Image"),
             filter: { types: ["type.image"] },
           },
         },
       },
       addressLabel: {
-        label: "Address Label",
+        label: msg("fields.addressLabel", "Address Label"),
         type: "object",
         objectFields: {
           text: {
             type: "entityField",
-            label: "Text",
+            label: msg("fields.text", "Text"),
             filter: { types: ["type.string"] },
           },
         },
       },
       address: {
         type: "entityField",
-        label: "Address",
+        label: msg("fields.address", "Address"),
         filter: { types: ["type.address"] },
       },
       showRegion: {
-        label: "Show Region",
+        label: msg("fields.showRegion", "Show Region"),
         type: "radio",
         options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
+          { label: msg("fields.options.yes", "Yes"), value: true },
+          { label: msg("fields.options.no", "No"), value: false },
         ],
       },
       showCountry: {
-        label: "Show Country",
+        label: msg("fields.showCountry", "Show Country"),
         type: "radio",
         options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
+          { label: msg("fields.options.yes", "Yes"), value: true },
+          { label: msg("fields.options.no", "No"), value: false },
         ],
       },
       phoneLabel: {
-        label: "Phone Label",
+        label: msg("fields.phoneLabel", "Phone Label"),
         type: "object",
         objectFields: {
           text: {
             type: "entityField",
-            label: "Text",
+            label: msg("fields.text", "Text"),
             filter: { types: ["type.string"] },
           },
         },
       },
       phones: {
-        label: "Phones",
+        label: msg("fields.phones", "Phones"),
         type: "object",
         objectFields: {
           items: {
-            label: "Items",
+            label: msg("fields.items", "Items"),
             type: "array",
             arrayFields: {
               number: {
                 type: "entityField",
-                label: "Number",
+                label: msg("fields.number", "Number"),
                 filter: { types: ["type.phone"] },
               },
               label: {
                 type: "entityField",
-                label: "Label",
+                label: msg("fields.label", "Label"),
                 filter: { types: ["type.string"] },
               },
             },
@@ -258,144 +261,144 @@ const InfoPanelsFields: YextFields<BoutiqueHospitalityInfoPanelsProps> = {
               "Phone",
           },
           phoneFormat: {
-            label: "Phone Format",
+            label: msg("fields.phoneFormat", "Phone Format"),
             type: "radio",
             options: [
-              { label: "Domestic", value: "domestic" },
-              { label: "International", value: "international" },
+              { label: msg("fields.options.domestic", "Domestic"), value: "domestic" },
+              { label: msg("fields.options.international", "International"), value: "international" },
             ],
           },
           includeHyperlink: {
-            label: "Include Hyperlink",
+            label: msg("fields.includeHyperlink", "Include Hyperlink"),
             type: "radio",
             options: [
-              { label: "Yes", value: true },
-              { label: "No", value: false },
+              { label: msg("fields.options.yes", "Yes"), value: true },
+              { label: msg("fields.options.no", "No"), value: false },
             ],
           },
         },
       },
       accessibilityLabel: {
-        label: "Accessibility Label",
+        label: msg("fields.accessibilityLabel", "Accessibility Label"),
         type: "object",
         objectFields: {
           text: {
             type: "entityField",
-            label: "Text",
+            label: msg("fields.text", "Text"),
             filter: { types: ["type.string"] },
           },
         },
       },
       accessibilityBody: {
-        label: "Accessibility Body",
+        label: msg("fields.accessibilityBody", "Accessibility Body"),
         type: "object",
         objectFields: {
           text: {
             type: "entityField",
-            label: "Text",
+            label: msg("fields.text", "Text"),
             filter: { types: ["type.rich_text_v2"] },
           },
         },
       },
       checkInLabel: {
-        label: "Check-In Label",
+        label: msg("fields.checkInLabel", "Check-In Label"),
         type: "object",
         objectFields: {
           text: {
             type: "entityField",
-            label: "Text",
+            label: msg("fields.text", "Text"),
             filter: { types: ["type.string"] },
           },
         },
       },
       checkInBody: {
-        label: "Check-In Body",
+        label: msg("fields.checkInBody", "Check-In Body"),
         type: "object",
         objectFields: {
           text: {
             type: "entityField",
-            label: "Text",
+            label: msg("fields.text", "Text"),
             filter: { types: ["type.rich_text_v2"] },
           },
         },
       },
-      visitCta: { label: "Visit CTA", type: "comprehensiveCTA" },
-      availabilityCta: { label: "Availability CTA", type: "comprehensiveCTA" },
+      visitCta: { label: msg("fields.visitCta", "Visit CTA"), type: "comprehensiveCTA" },
+      availabilityCta: { label: msg("fields.availabilityCta", "Availability CTA"), type: "comprehensiveCTA" },
     },
   },
   hoursCard: {
-    label: "Hours Card",
+    label: msg("fields.hoursCard", "Hours Card"),
     type: "object",
     objectFields: {
       heading: {
-        label: "Heading",
+        label: msg("fields.heading", "Heading"),
         type: "object",
         objectFields: {
           text: {
             type: "entityField",
-            label: "Text",
+            label: msg("fields.text", "Text"),
             filter: { types: ["type.string"] },
           },
         },
       },
       image: {
-        label: "Image",
+        label: msg("fields.image", "Image"),
         type: "object",
         objectFields: {
           image: {
             type: "entityField",
-            label: "Image",
+            label: msg("fields.image", "Image"),
             filter: { types: ["type.image"] },
           },
         },
       },
       hours: {
         type: "entityField",
-        label: "Hours",
+        label: msg("fields.hours", "Hours"),
         filter: { types: ["type.hours"] },
         disableConstantValueToggle: true,
       },
       hoursStyles: {
-        label: "Hours Styles",
+        label: msg("fields.hoursStyles", "Hours Styles"),
         type: "object",
         objectFields: {
           startOfWeek: {
-            label: "Start Of Week",
+            label: msg("fields.startOfWeek", "Start Of Week"),
             type: "select",
             options: [
-              { label: "Monday", value: "monday" },
-              { label: "Tuesday", value: "tuesday" },
-              { label: "Wednesday", value: "wednesday" },
-              { label: "Thursday", value: "thursday" },
-              { label: "Friday", value: "friday" },
-              { label: "Saturday", value: "saturday" },
-              { label: "Sunday", value: "sunday" },
-              { label: "Today", value: "today" },
+              { label: msg("fields.options.monday", "Monday"), value: "monday" },
+              { label: msg("fields.options.tuesday", "Tuesday"), value: "tuesday" },
+              { label: msg("fields.options.wednesday", "Wednesday"), value: "wednesday" },
+              { label: msg("fields.options.thursday", "Thursday"), value: "thursday" },
+              { label: msg("fields.options.friday", "Friday"), value: "friday" },
+              { label: msg("fields.options.saturday", "Saturday"), value: "saturday" },
+              { label: msg("fields.options.sunday", "Sunday"), value: "sunday" },
+              { label: msg("fields.options.today", "Today"), value: "today" },
             ],
           },
           collapseDays: {
-            label: "Collapse Days",
+            label: msg("fields.collapseDays", "Collapse Days"),
             type: "radio",
             options: [
-              { label: "Yes", value: true },
-              { label: "No", value: false },
+              { label: msg("fields.options.yes", "Yes"), value: true },
+              { label: msg("fields.options.no", "No"), value: false },
             ],
           },
           showAdditionalHoursText: {
-            label: "Show Additional Hours Text",
+            label: msg("fields.showAdditionalHoursText", "Show Additional Hours Text"),
             type: "radio",
             options: [
-              { label: "Yes", value: true },
-              { label: "No", value: false },
+              { label: msg("fields.options.yes", "Yes"), value: true },
+              { label: msg("fields.options.no", "No"), value: false },
             ],
           },
           alignment: {
-            label: "Alignment",
+            label: msg("fields.alignment", "Alignment"),
             type: "select",
             options: [
-              { label: "Start", value: "items-start" },
-              { label: "Center", value: "items-center" },
-              { label: "End", value: "items-end" },
+              { label: msg("fields.options.start", "Start"), value: "items-start" },
+              { label: msg("fields.options.center", "Center"), value: "items-center" },
+              { label: msg("fields.options.end", "End"), value: "items-end" },
             ],
           },
         },
@@ -403,38 +406,38 @@ const InfoPanelsFields: YextFields<BoutiqueHospitalityInfoPanelsProps> = {
     },
   },
   complimentaryCard: {
-    label: "Complimentary Card",
+    label: msg("fields.complimentaryCard", "Complimentary Card"),
     type: "object",
     objectFields: {
       heading: {
-        label: "Heading",
+        label: msg("fields.heading", "Heading"),
         type: "object",
         objectFields: {
           text: {
             type: "entityField",
-            label: "Text",
+            label: msg("fields.text", "Text"),
             filter: { types: ["type.string"] },
           },
         },
       },
       image: {
-        label: "Image",
+        label: msg("fields.image", "Image"),
         type: "object",
         objectFields: {
           image: {
             type: "entityField",
-            label: "Image",
+            label: msg("fields.image", "Image"),
             filter: { types: ["type.image"] },
           },
         },
       },
       list: {
-        label: "Complimentary List",
+        label: msg("fields.complimentaryList", "Complimentary List"),
         type: "object",
         objectFields: {
           text: {
             type: "entityField",
-            label: "Text List",
+            label: msg("fields.textList", "Text List"),
             filter: { types: ["type.string"], includeListsOnly: true },
           },
         },
@@ -442,40 +445,40 @@ const InfoPanelsFields: YextFields<BoutiqueHospitalityInfoPanelsProps> = {
     },
   },
   panelStyles: {
-    label: "Panel Styles",
+    label: msg("fields.panelStyles", "Panel Styles"),
     type: "object",
     objectFields: {
       heading: {
-        label: "Heading",
+        label: msg("fields.heading", "Heading"),
         type: "object",
         objectFields: {
-          styles: { label: "Text Styles", type: "styledText" },
+          styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
           fontColor: {
-            label: "Font Color",
+            label: msg("fields.fontColor", "Font Color"),
             type: "basicSelector",
             options: "SITE_COLOR",
           },
         },
       },
       text: {
-        label: "Text",
+        label: msg("fields.text", "Text"),
         type: "object",
         objectFields: {
-          styles: { label: "Text Styles", type: "styledText" },
+          styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
           fontColor: {
-            label: "Font Color",
+            label: msg("fields.fontColor", "Font Color"),
             type: "basicSelector",
             options: "SITE_COLOR",
           },
         },
       },
       label: {
-        label: "Labels",
+        label: msg("fields.labels", "Labels"),
         type: "object",
         objectFields: {
-          styles: { label: "Text Styles", type: "styledText" },
+          styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
           fontColor: {
-            label: "Font Color",
+            label: msg("fields.fontColor", "Font Color"),
             type: "basicSelector",
             options: "SITE_COLOR",
           },
@@ -559,8 +562,15 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
   panelStyles,
   puck,
 }) => {
+  const { t, i18n } = useTranslation();
   const streamDocument = useDocument();
   const locale = streamDocument.locale ?? "en";
+  const hoursTableIntervalTranslations: HoursTableIntervalTranslations = {
+    isClosed: t("closed", "Closed"),
+    open24Hours: t("open24Hours", "Open 24 Hours"),
+    reopenDate: t("reopenDate", "Reopen Date"),
+    timeFormatLocale: i18n.language,
+  };
   const cardTextColor = getThemeColorCssValue(
     getDefaultForegroundColor(section.panelBackgroundColor, streamDocument),
   );
@@ -1188,6 +1198,9 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                           comingSoon={streamDocument.comingSoon}
                           startOfWeek={hoursCard.hoursStyles.startOfWeek}
                           collapseDays={hoursCard.hoursStyles.collapseDays}
+                          intervalTranslations={
+                            hoursTableIntervalTranslations
+                          }
                         />
                         {hoursCard.hoursStyles.showAdditionalHoursText &&
                         additionalHoursText ? (

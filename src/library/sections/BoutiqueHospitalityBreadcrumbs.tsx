@@ -9,6 +9,7 @@ import {
   getDefaultForegroundColor,
   getSurfaceColorStyle,
   getThemeColorCssValue,
+  pt,
   resolveBreadcrumbs,
   resolveComponentData,
   ThemeColor,
@@ -20,6 +21,7 @@ import {
   type YextComponentConfig,
   type YextEntityField,
   type YextFields,
+  msg,
 } from "@yext/visual-editor";
 
 type StyledTextProps = {
@@ -52,72 +54,72 @@ type BreadcrumbsStreamDocument = {
 
 const BreadcrumbsFields: YextFields<BoutiqueHospitalityBreadcrumbsProps> = {
   section: {
-    label: "Section",
+    label: msg("fields.section", "Section"),
     type: "object",
     objectFields: {
       visibleOnLivePage: {
-        label: "Visible on Live Page",
+        label: msg("fields.visibleOnLivePage", "Visible on Live Page"),
         type: "radio",
         options: [
-          { label: "Yes", value: true },
-          { label: "No", value: false },
+          { label: msg("fields.options.yes", "Yes"), value: true },
+          { label: msg("fields.options.no", "No"), value: false },
         ],
       },
       backgroundColor: {
-        label: "Background Color",
+        label: msg("fields.backgroundColor", "Background Color"),
         type: "basicSelector",
         options: "BACKGROUND_COLOR",
       },
     },
   },
   directoryRoot: {
-    label: "Directory Root",
+    label: msg("fields.directoryRoot", "Directory Root"),
     type: "object",
     objectFields: {
       text: {
         type: "entityField",
-        label: "Text",
+        label: msg("fields.text", "Text"),
         filter: { types: ["type.string"] },
       },
       styles: {
-        label: "Text Styles",
+        label: msg("fields.textStyles", "Text Styles"),
         type: "styledText",
       },
       fontColor: {
-        label: "Font Color",
+        label: msg("fields.fontColor", "Font Color"),
         type: "basicSelector",
         options: "SITE_COLOR",
       },
     },
   },
   includeCurrentPage: {
-    label: "Include Current Page",
+    label: msg("fields.includeCurrentPage", "Include Current Page"),
     type: "radio",
     options: [
-      { label: "Yes", value: true },
-      { label: "No", value: false },
+      { label: msg("fields.options.yes", "Yes"), value: true },
+      { label: msg("fields.options.no", "No"), value: false },
     ],
   },
   trailStyles: {
-    label: "Trail Styles",
+    label: msg("fields.trailStyles", "Trail Styles"),
     type: "object",
     objectFields: {
       styles: {
-        label: "Text Styles",
+        label: msg("fields.textStyles", "Text Styles"),
         type: "styledText",
       },
       fontColor: {
-        label: "Font Color",
+        label: msg("fields.fontColor", "Font Color"),
         type: "basicSelector",
         options: "SITE_COLOR",
       },
       currentPageColor: {
-        label: "Current Page Color",
+        label: msg("fields.currentPageColor", "Current Page Color"),
         type: "basicSelector",
         options: "SITE_COLOR",
       },
       separatorColor: {
-        label: "Separator Color",
+        label: msg("fields.separatorColor", "Separator Color"),
         type: "basicSelector",
         options: "SITE_COLOR",
       },
@@ -252,8 +254,10 @@ const BoutiqueHospitalityBreadcrumbsComponent: PuckComponent<
                     padding: "18px 24px",
                   }}
                 >
-                  No breadcrumbs available (section will be hidden on live
-                  page). Create a directory to enable breadcrumbs.
+                  {pt(
+                    "noBreadcrumbs",
+                    "No breadcrumbs available (section will be hidden on live page). Create a directory to enable breadcrumbs.",
+                  )}
                 </p>
               </div>
             </section>
