@@ -1,6 +1,6 @@
+import { pt } from "@yext/visual-editor";
 import type { SectionConfig } from "@yext/visual-editor";
 
-import * as React from "react";
 import type { PuckComponent } from "@puckeditor/core";
 import { AnalyticsScopeProvider } from "@yext/pages-components";
 import {
@@ -29,17 +29,16 @@ import {
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
 import { createCta } from "../shared/createCta";
 import { aspectRatioOptions } from "../shared/fieldOptions";
+import { getTextStyle, renderRichText, resolveRichTextStyles } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<string>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type StyledRtfProps = {
   text: YextEntityField<TranslatableRichText>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type ImageFieldProps = {
@@ -94,11 +93,10 @@ const AboutHotelFields: YextFields<BoutiqueHospitalityAboutHotelProps> = {
         label: msg("fields.text", "Text"),
         filter: { types: ["type.string"] },
       },
-      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-      fontColor: {
-        label: msg("fields.fontColor", "Font Color"),
-        type: "basicSelector",
-        options: "SITE_COLOR",
+      styles: {
+        label: msg("fields.textStyles", "Text Styles"),
+        type: "styledText",
+        includeColor: true,
       },
     },
   },
@@ -111,11 +109,10 @@ const AboutHotelFields: YextFields<BoutiqueHospitalityAboutHotelProps> = {
         label: msg("fields.text", "Text"),
         filter: { types: ["type.rich_text_v2"] },
       },
-      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-      fontColor: {
-        label: msg("fields.fontColor", "Font Color"),
-        type: "basicSelector",
-        options: "SITE_COLOR",
+      styles: {
+        label: msg("fields.textStyles", "Text Styles"),
+        type: "styledText",
+        includeColor: true,
       },
     },
   },
@@ -168,13 +165,17 @@ const BoutiqueHospitalityAboutHotelComponent: PuckComponent<
       (resolvedImage as { image?: { url?: string } }).image?.url),
   );
   const textColor =
-    getThemeColorCssValue(body.fontColor) ??
+    getThemeColorCssValue(body.styles.color) ??
     getThemeColorCssValue(
       getDefaultForegroundColor(section.panelBackgroundColor, streamDocument),
     );
-  const bodyContent = React.isValidElement(resolvedBody)
-    ? resolvedBody
-    : (resolvedBody ?? null);
+  const bodyContent = renderRichText(
+    resolvedBody,
+    resolveRichTextStyles(
+      body.styles,
+      getDefaultForegroundColor(section.panelBackgroundColor, streamDocument),
+    ),
+  );
 
   return (
     <VisibilityWrapper
@@ -259,24 +260,28 @@ const BoutiqueHospitalityAboutHotelComponent: PuckComponent<
             <div className="ybh-about-heading-row">
               <span className="ybh-about-line" aria-hidden />
               <EntityField
-                displayName="Heading"
+                displayName={pt("fields.heading", "Heading")}
                 fieldId={heading.text.field}
                 constantValueEnabled={heading.text.constantValueEnabled}
               >
                 <h2
                   style={{
+                    ...getTextStyle(heading.styles),
                     margin: 0,
                     color:
-                      getThemeColorCssValue(heading.fontColor) ??
+                      getThemeColorCssValue(heading.styles.color) ??
                       getThemeColorCssValue(
                         getDefaultForegroundColor(
                           section.backgroundColor,
                           streamDocument,
                         ),
                       ),
-                    fontFamily:
-                      "var(--fontFamily-h2-fontFamily, 'Fraunces', serif)",
-                    fontSize: "clamp(1.9rem, 3vw, 2.3rem)",
+                    fontFamily: heading.styles.fontFamily === "default"
+                      ? "var(--fontFamily-h2-fontFamily, 'Fraunces', serif)"
+                      : heading.styles.fontFamily,
+                    fontSize: heading.styles.fontSize === "default"
+                      ? "clamp(1.9rem, 3vw, 2.3rem)"
+                      : heading.styles.fontSize,
                   }}
                 >
                   {resolvedHeading}
@@ -293,7 +298,7 @@ const BoutiqueHospitalityAboutHotelComponent: PuckComponent<
             >
               {hasImage ? (
                 <EntityField
-                  displayName="Image"
+                  displayName={pt("fields.image", "Image")}
                   fieldId={image.image.field}
                   constantValueEnabled={image.image.constantValueEnabled}
                 >
@@ -320,7 +325,7 @@ const BoutiqueHospitalityAboutHotelComponent: PuckComponent<
               ) : null}
               <div className="ybh-about-copy" style={{ color: textColor }}>
                 <EntityField
-                  displayName="Body"
+                  displayName={pt("fields.body", "Body")}
                   fieldId={body.text.field}
                   constantValueEnabled={body.text.constantValueEnabled}
                 >
@@ -328,7 +333,7 @@ const BoutiqueHospitalityAboutHotelComponent: PuckComponent<
                 </EntityField>
                 <div>
                   <EntityField
-                    displayName="Call to Action"
+                    displayName={pt("fields.callToAction", "Call to Action")}
                     fieldId={cta.data.cta.field}
                     constantValueEnabled={cta.data.cta.constantValueEnabled}
                   >
@@ -350,7 +355,7 @@ const BoutiqueHospitalityAboutHotelComponent: PuckComponent<
 
 export const BoutiqueHospitalityAboutHotel: YextComponentConfig<BoutiqueHospitalityAboutHotelProps> =
   {
-    label: "About Hotel",
+    label: msg("components.aboutHotel", "About"),
     fields: AboutHotelFields,
     defaultProps: {
       section: {
@@ -377,7 +382,6 @@ export const BoutiqueHospitalityAboutHotel: YextComponentConfig<BoutiqueHospital
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       body: {
         text: {
@@ -397,7 +401,6 @@ export const BoutiqueHospitalityAboutHotel: YextComponentConfig<BoutiqueHospital
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       image: {
         image: {
@@ -419,7 +422,7 @@ export const BoutiqueHospitalityAboutHotel: YextComponentConfig<BoutiqueHospital
 
 export const config: SectionConfig = {
   id: "BoutiqueHospitalityAboutHotel",
-  displayName: "About Hotel",
-  description: "About Hotel",
+  displayName: "About",
+  description: "About",
   pageSetTypes: ["ENTITY"],
 };

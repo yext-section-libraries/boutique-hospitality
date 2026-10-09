@@ -30,6 +30,7 @@ import {
 import { formatPhoneNumber } from "@yext/visual-editor/section-library-support";
 import { useTranslation } from "react-i18next";
 import { getTextStyle } from "../shared/sectionStyles";
+import { calculateDistanceMeters, formatDistanceAway } from "../shared/localization";
 
 type BoutiqueHospitalityNearbyPropertiesProps = {
   section: {
@@ -40,7 +41,6 @@ type BoutiqueHospitalityNearbyPropertiesProps = {
   heading: {
     text: YextEntityField<TranslatableString>;
     styles: StyledTextValue;
-    fontColor?: ThemeColor;
   };
   radius: number;
   limit: number;
@@ -64,31 +64,6 @@ const defaultTextStyles: StyledTextValue = {
   fontWeight: "default",
   fontStyle: "default",
   textTransform: "default",
-};
-
-const getMilesBetween = (
-  a?: { latitude?: number; longitude?: number },
-  b?: { latitude?: number; longitude?: number },
-) => {
-  if (
-    a?.latitude === undefined ||
-    a?.longitude === undefined ||
-    b?.latitude === undefined ||
-    b?.longitude === undefined
-  ) {
-    return null;
-  }
-  const toRad = (deg: number) => (deg * Math.PI) / 180;
-  const earthRadiusMiles = 3958.8;
-  const dLat = toRad(b.latitude - a.latitude);
-  const dLon = toRad(b.longitude - a.longitude);
-  const lat1 = toRad(a.latitude);
-  const lat2 = toRad(b.latitude);
-  const sinLat = Math.sin(dLat / 2);
-  const sinLon = Math.sin(dLon / 2);
-  const h = sinLat * sinLat + Math.cos(lat1) * Math.cos(lat2) * sinLon * sinLon;
-  const distance = 2 * earthRadiusMiles * Math.asin(Math.sqrt(h));
-  return `${distance.toFixed(1)} miles away`;
 };
 
 const NearbyFields: YextFields<BoutiqueHospitalityNearbyPropertiesProps> = {
@@ -125,11 +100,10 @@ const NearbyFields: YextFields<BoutiqueHospitalityNearbyPropertiesProps> = {
         label: msg("fields.text", "Text"),
         filter: { types: ["type.string"] },
       },
-      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-      fontColor: {
-        label: msg("fields.fontColor", "Font Color"),
-        type: "basicSelector",
-        options: "SITE_COLOR",
+      styles: {
+        label: msg("fields.textStyles", "Text Styles"),
+        type: "styledText",
+        includeColor: true,
       },
     },
   },
@@ -165,7 +139,7 @@ const BoutiqueHospitalityNearbyPropertiesComponent: PuckComponent<
   BoutiqueHospitalityNearbyPropertiesProps
 > = ({ id, heading, radius, limit, map, section, puck }) => {
   const streamDocument = useDocument<NearbyStreamDocument>();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const locale = streamDocument.locale ?? "en";
   const { relativePrefixToRoot } = useTemplateProps<{
     relativePrefixToRoot?: string;
@@ -175,7 +149,7 @@ const BoutiqueHospitalityNearbyPropertiesComponent: PuckComponent<
       output: "plainText",
     }) || "";
   const headingColor =
-    getThemeColorCssValue(heading.fontColor) ??
+    getThemeColorCssValue(heading.styles.color) ??
     getThemeColorCssValue(
       getDefaultForegroundColor(section.backgroundColor, streamDocument),
     );
@@ -236,7 +210,7 @@ const BoutiqueHospitalityNearbyPropertiesComponent: PuckComponent<
           .ybh-nearby-heading-text {
             margin: 0;
             color: inherit;
-            font-family: var(--fontFamily-h2-fontFamily, "Fraunces", serif);
+            font-family: var(--fontFamily-h2-fontFamily, Fraunces, serif);
             font-size: clamp(2.25rem, 3.75vw, 3.25rem);
             line-height: 0.95;
             min-width: 0;
@@ -296,7 +270,7 @@ const BoutiqueHospitalityNearbyPropertiesComponent: PuckComponent<
                 <div className="ybh-nearby-heading">
                   <span className="ybh-nearby-line" aria-hidden />
                   <EntityField
-                    displayName="Heading"
+                    displayName={pt("fields.heading", "Heading")}
                     fieldId={heading.text.field}
                     constantValueEnabled={heading.text.constantValueEnabled}
                   >
@@ -335,10 +309,13 @@ const BoutiqueHospitalityNearbyPropertiesComponent: PuckComponent<
                           mergeMeta(locationData, streamDocument),
                           relativePrefixToRoot ?? "",
                         );
-                        const distanceText = getMilesBetween(
+                        const distanceMeters = calculateDistanceMeters(
                           coordinate,
                           locationData.yextDisplayCoordinate,
                         );
+                        const distanceText = distanceMeters === undefined
+                          ? undefined
+                          : formatDistanceAway(distanceMeters, i18n.language, t);
                         const phone =
                           typeof locationData.mainPhone === "string"
                             ? locationData.mainPhone
@@ -363,7 +340,7 @@ const BoutiqueHospitalityNearbyPropertiesComponent: PuckComponent<
                                 color: cardTextColor,
                               }}
                             >
-                              {locationData.name ?? "Nearby Location"}
+                              {locationData.name ?? t("nearbyLocation", "Nearby Location")}
                             </h3>
                             {locationData.address ? (
                               <Address
@@ -382,7 +359,7 @@ const BoutiqueHospitalityNearbyPropertiesComponent: PuckComponent<
                               eventName={`nearbyGetDirections${index}`}
                               style={{ color: cardTextColor }}
                             >
-                              Get Directions
+                              {t("getDirections", "Get Directions")}
                             </Link>
                           </article>
                         );
@@ -410,7 +387,7 @@ const BoutiqueHospitalityNearbyPropertiesComponent: PuckComponent<
             )}
             {showMap ? (
               <EntityField
-                displayName="Map Coordinates"
+                displayName={pt("fields.mapCoordinates", "Map Coordinates")}
                 fieldId={map.coordinate.field}
                 constantValueEnabled={map.coordinate.constantValueEnabled}
               >
@@ -432,7 +409,7 @@ const BoutiqueHospitalityNearbyPropertiesComponent: PuckComponent<
 
 export const BoutiqueHospitalityNearbyProperties: YextComponentConfig<BoutiqueHospitalityNearbyPropertiesProps> =
   {
-    label: "Nearby Properties",
+    label: msg("components.nearbyProperties", "Nearby Properties"),
     fields: NearbyFields,
     defaultProps: {
       section: {
@@ -453,7 +430,6 @@ export const BoutiqueHospitalityNearbyProperties: YextComponentConfig<BoutiqueHo
           constantValueEnabled: true,
         },
         styles: defaultTextStyles,
-        fontColor: undefined,
       },
       radius: 10,
       limit: 3,

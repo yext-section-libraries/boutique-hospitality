@@ -1,3 +1,4 @@
+import { pt } from "@yext/visual-editor";
 import type { SectionConfig } from "@yext/visual-editor";
 
 import type { PuckComponent } from "@puckeditor/core";
@@ -28,7 +29,6 @@ import { getTextStyle } from "../shared/sectionStyles";
 type StyledTextProps = {
   text: YextEntityField<string>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type TextOnlyProps = {
@@ -99,11 +99,10 @@ const FooterFields: YextFields<BoutiqueHospitalityFooterProps> = {
         label: msg("fields.text", "Text"),
         filter: { types: ["type.string"] },
       },
-      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-      fontColor: {
-        label: msg("fields.fontColor", "Font Color"),
-        type: "basicSelector",
-        options: "SITE_COLOR",
+      styles: {
+        label: msg("fields.textStyles", "Text Styles"),
+        type: "styledText",
+        includeColor: true,
       },
     },
   },
@@ -162,7 +161,7 @@ const FooterFields: YextFields<BoutiqueHospitalityFooterProps> = {
         getItemSummary: (item) =>
           (typeof item.label?.constantValue === "string"
             ? item.label.constantValue
-            : item.label?.field) || item.number?.field || "Phone",
+            : item.label?.field) || item.number?.field || pt("fields.phone", "Phone"),
       },
       phoneFormat: {
         label: msg("fields.phoneFormat", "Phone Format"),
@@ -186,24 +185,33 @@ const FooterFields: YextFields<BoutiqueHospitalityFooterProps> = {
     label: msg("fields.contactTextStyles", "Contact Text Styles"),
     type: "object",
     objectFields: {
-      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-      fontColor: { label: msg("fields.fontColor", "Font Color"), type: "basicSelector", options: "SITE_COLOR" },
+      styles: {
+        label: msg("fields.textStyles", "Text Styles"),
+        type: "styledText",
+        includeColor: true,
+      },
     },
   },
   linkColumnStyles: {
     label: msg("fields.linkColumnHeadingStyles", "Link Column Heading Styles"),
     type: "object",
     objectFields: {
-      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-      fontColor: { label: msg("fields.fontColor", "Font Color"), type: "basicSelector", options: "SITE_COLOR" },
+      styles: {
+        label: msg("fields.textStyles", "Text Styles"),
+        type: "styledText",
+        includeColor: true,
+      },
     },
   },
   linkStyles: {
     label: msg("fields.linkStyles", "Link Styles"),
     type: "object",
     objectFields: {
-      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-      fontColor: { label: msg("fields.fontColor", "Font Color"), type: "basicSelector", options: "SITE_COLOR" },
+      styles: {
+        label: msg("fields.textStyles", "Text Styles"),
+        type: "styledText",
+        includeColor: true,
+      },
     },
   },
   quickLinksHeading: {
@@ -243,7 +251,7 @@ const FooterFields: YextFields<BoutiqueHospitalityFooterProps> = {
     getItemSummary: (item) =>
       (typeof item.label?.constantValue === "string"
         ? item.label.constantValue
-        : item.label?.field) || "Quick Link",
+        : item.label?.field) || pt("fields.quickLink", "Quick Link"),
   },
   socialLinksHeading: {
     label: msg("fields.socialLinksHeading", "Social Links Heading"),
@@ -282,7 +290,7 @@ const FooterFields: YextFields<BoutiqueHospitalityFooterProps> = {
     getItemSummary: (item) =>
       (typeof item.label?.constantValue === "string"
         ? item.label.constantValue
-        : item.label?.field) || "Social Link",
+        : item.label?.field) || pt("fields.socialLink", "Social Link"),
   },
 };
 
@@ -358,16 +366,10 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
     section.backgroundColor,
     streamDocument,
   );
-  const contactTextStyle = getTextStyle(
-    contactStyles.styles,
-    contactStyles.fontColor,
-  );
-  const linkColumnTextStyle = getTextStyle(
-    linkColumnStyles.styles,
-    linkColumnStyles.fontColor,
-  );
-  const linkTextStyle = getTextStyle(linkStyles.styles, linkStyles.fontColor);
-  const brandTextStyle = getTextStyle(brand.styles, brand.fontColor);
+  const contactTextStyle = getTextStyle(contactStyles.styles);
+  const linkColumnTextStyle = getTextStyle(linkColumnStyles.styles);
+  const linkTextStyle = getTextStyle(linkStyles.styles);
+  const brandTextStyle = getTextStyle(brand.styles);
 
   return (
     <VisibilityWrapper
@@ -390,7 +392,7 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
               min-width: 0;
             }
             .ybh-footer-brand {
-              font-family: var(--fontFamily-h2-fontFamily, "Fraunces", serif);
+              font-family: var(--fontFamily-h2-fontFamily, Fraunces, serif);
               font-size: 1.65rem;
               margin-bottom: 24px;
             }
@@ -401,7 +403,7 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
             }
             .ybh-footer-column-title {
               margin: 0 0 16px;
-              font-family: var(--fontFamily-body-fontFamily, "Inter", sans-serif);
+              font-family: var(--fontFamily-body-fontFamily, Inter, sans-serif);
               font-weight: 600;
             }
             .ybh-footer-link {
@@ -418,9 +420,6 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
               text-decoration: none;
               margin-top: 10px;
             }
-            .ybh-footer-link:hover > span:first-child {
-              text-decoration: underline;
-            }
             .ybh-footer-link:first-of-type {
               margin-top: 0;
             }
@@ -429,12 +428,6 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
             }
             .ybh-footer-arrow {
               flex-shrink: 0;
-            }
-            .ybh-footer-link > span:first-child {
-              min-width: 0;
-              flex: 1 1 auto;
-              overflow-wrap: anywhere;
-              word-break: break-word;
             }
             .ybh-footer-contact {
               display: flex;
@@ -471,13 +464,6 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
               .ybh-footer-social {
                 padding-top: 12px;
               }
-              .ybh-footer-links-grid > div {
-                min-width: 0;
-              }
-              .ybh-footer-link > span:first-child {
-                min-width: 0;
-                overflow-wrap: anywhere;
-              }
             }
           `}</style>
         <footer className="ybh-footer-shell" style={shellStyle}>
@@ -485,7 +471,7 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
             <div className="ybh-footer-grid">
               <div>
                 <EntityField
-                  displayName="Brand"
+                  displayName={pt("fields.brand", "Brand")}
                   fieldId={brand.text.field}
                   constantValueEnabled={brand.text.constantValueEnabled}
                 >
@@ -496,7 +482,7 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
                 <div className="ybh-footer-contact" style={contactTextStyle}>
                   {resolvedAddress ? (
                     <EntityField
-                      displayName="Address"
+                      displayName={pt("fields.address", "Address")}
                       fieldId={address.field}
                       constantValueEnabled={address.constantValueEnabled}
                     >
@@ -511,7 +497,7 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
                     phones.includeHyperlink ? (
                       <EntityField
                         key={item.phoneNumber}
-                        displayName="Phone Number"
+                        displayName={pt("fields.phoneNumber", "Phone Number")}
                         fieldId={item.numberField.field}
                         constantValueEnabled={
                           item.numberField.constantValueEnabled
@@ -523,7 +509,7 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
                         >
                           {item.label && item.labelField ? (
                             <EntityField
-                              displayName="Phone Label"
+                              displayName={pt("fields.phoneLabel", "Phone Label")}
                               fieldId={item.labelField.field}
                               constantValueEnabled={
                                 item.labelField.constantValueEnabled
@@ -538,7 +524,7 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
                     ) : (
                       <EntityField
                         key={item.phoneNumber}
-                        displayName="Phone Number"
+                        displayName={pt("fields.phoneNumber", "Phone Number")}
                         fieldId={item.numberField.field}
                         constantValueEnabled={
                           item.numberField.constantValueEnabled
@@ -547,7 +533,7 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
                         <span>
                           {item.label && item.labelField ? (
                             <EntityField
-                              displayName="Phone Label"
+                              displayName={pt("fields.phoneLabel", "Phone Label")}
                               fieldId={item.labelField.field}
                               constantValueEnabled={
                                 item.labelField.constantValueEnabled
@@ -563,10 +549,10 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
                   )}
                 </div>
               </div>
-              <div className="ybh-footer-links-grid">
+              <div className="ybh-footer-links-grid max-[899px]:[&>div]:min-w-0">
                 <div>
                   <EntityField
-                    displayName="Quick Links Heading"
+                    displayName={pt("fields.quickLinksHeading", "Quick Links Heading")}
                     fieldId={quickLinksHeading.text.field}
                     constantValueEnabled={
                       quickLinksHeading.text.constantValueEnabled
@@ -591,18 +577,18 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
                     return (
                       <EntityField
                         key={`${label}-${index}`}
-                        displayName="Quick Link URL"
+                        displayName={pt("fields.quickLinkURL", "Quick Link URL")}
                         fieldId={item.link.field}
                         constantValueEnabled={item.link.constantValueEnabled}
                       >
                         <Link
                           cta={{ link, linkType: "URL" }}
-                          className="ybh-footer-link"
+                          className="ybh-footer-link [&>span:first-child]:min-w-0 [&>span:first-child]:flex-auto [&>span:first-child]:[overflow-wrap:anywhere] [&>span:first-child]:[word-break:break-word] [&:hover>span:first-child]:[text-decoration:underline]"
                           eventName={`footerQuickLink${index}`}
                           style={linkTextStyle}
                         >
                           <EntityField
-                            displayName="Quick Link Label"
+                            displayName={pt("fields.quickLinkLabel", "Quick Link Label")}
                             fieldId={item.label.field}
                             constantValueEnabled={
                               item.label.constantValueEnabled
@@ -618,7 +604,7 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
                 </div>
                 <div className="ybh-footer-social">
                   <EntityField
-                    displayName="Social Links Heading"
+                    displayName={pt("fields.socialLinksHeading", "Social Links Heading")}
                     fieldId={socialLinksHeading.text.field}
                     constantValueEnabled={
                       socialLinksHeading.text.constantValueEnabled
@@ -643,18 +629,18 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
                     return (
                       <EntityField
                         key={`${label}-${index}`}
-                        displayName="Social Link URL"
+                        displayName={pt("fields.socialLinkURL", "Social Link URL")}
                         fieldId={item.link.field}
                         constantValueEnabled={item.link.constantValueEnabled}
                       >
                         <Link
                           cta={{ link, linkType: "URL" }}
-                          className="ybh-footer-link"
+                          className="ybh-footer-link [&>span:first-child]:min-w-0 [&>span:first-child]:flex-auto [&>span:first-child]:[overflow-wrap:anywhere] [&>span:first-child]:[word-break:break-word] [&:hover>span:first-child]:[text-decoration:underline]"
                           eventName={`footerSocialLink${index}`}
                           style={linkTextStyle}
                         >
                           <EntityField
-                            displayName="Social Link Label"
+                            displayName={pt("fields.socialLinkLabel", "Social Link Label")}
                             fieldId={item.label.field}
                             constantValueEnabled={
                               item.label.constantValueEnabled
@@ -679,7 +665,7 @@ const BoutiqueHospitalityFooterComponent: PuckComponent<
 
 export const BoutiqueHospitalityFooter: YextComponentConfig<BoutiqueHospitalityFooterProps> =
   {
-    label: "Footer",
+    label: msg("components.footer", "Footer"),
     fields: FooterFields,
     defaultProps: {
       section: {
@@ -701,11 +687,11 @@ export const BoutiqueHospitalityFooter: YextComponentConfig<BoutiqueHospitalityF
           fontWeight: "default",
           fontStyle: "default",
           textTransform: "default",
-        },
-        fontColor: {
-          selectedColor: "palette-primary",
-          contrastingColor: "palette-primary-contrast",
-          isDarkColor: false,
+          color: {
+            selectedColor: "palette-primary",
+            contrastingColor: "palette-primary-contrast",
+            isDarkColor: false,
+          },
         },
       },
       address: {
@@ -729,7 +715,6 @@ export const BoutiqueHospitalityFooter: YextComponentConfig<BoutiqueHospitalityF
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       phones: {
         items: [
@@ -757,7 +742,6 @@ export const BoutiqueHospitalityFooter: YextComponentConfig<BoutiqueHospitalityF
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       linkStyles: {
         styles: {
@@ -767,7 +751,6 @@ export const BoutiqueHospitalityFooter: YextComponentConfig<BoutiqueHospitalityF
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       quickLinksHeading: {
         text: {

@@ -3,6 +3,7 @@ import { CardProps } from "@yext/search-ui-react";
 import { Result } from "@yext/search-headless-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { getLocalizedCountOptions } from "../../localization";
 import { YextAutoField } from "@yext/visual-editor/section-library-support";
 import { useDocument } from "@yext/visual-editor/section-library-support";
 import { useTemplateMetadata } from "@yext/visual-editor/section-library-support";
@@ -238,10 +239,12 @@ export const ResultsCountSummary = ({
       return (
         <Body>
           {t("locationsWithinDistanceOf", {
+            ...getLocalizedCountOptions(resultCount, i18n.language, {
+              distance: new Intl.NumberFormat(i18n.language).format(selectedDistanceOption),
+              unit: translateDistanceUnit(t, unit, selectedDistanceOption),
+              name: filterDisplayName,
+            }),
             count: resultCount,
-            distance: selectedDistanceOption,
-            unit: translateDistanceUnit(t, unit, selectedDistanceOption),
-            name: filterDisplayName,
           })}
         </Body>
       );
@@ -250,8 +253,8 @@ export const ResultsCountSummary = ({
     return (
       <Body>
         {t("locationsNear", {
+          ...getLocalizedCountOptions(resultCount, i18n.language, { name: filterDisplayName }),
           count: resultCount,
-          name: filterDisplayName,
         })}
       </Body>
     );
@@ -260,6 +263,7 @@ export const ResultsCountSummary = ({
   return (
     <Body>
       {t("locationWithCount", {
+        ...getLocalizedCountOptions(resultCount, i18n.language),
         count: resultCount,
       })}
     </Body>

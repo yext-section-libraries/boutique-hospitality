@@ -1,49 +1,85 @@
 import * as React from "react";
 import {
   MaybeRTF,
-  getDefaultForegroundColor,
   getThemeColorCssValue,
-  type MaybeRTFProps,
+  normalizeThemeColorToken,
+  renderStyledRichText,
   type RichText,
-  type StreamDocument,
   type StyledTextValue,
   type ThemeColor,
 } from "@yext/visual-editor";
 
-export const hasExplicitThemeColor = (
-  color?: ThemeColor,
-): color is ThemeColor =>
-  Boolean(color?.selectedColor && color.selectedColor !== "default");
-
-export const getReadableForegroundColor = (
-  surfaceColor: ThemeColor,
-  streamDocument?: StreamDocument | Record<string, unknown>,
-): ThemeColor =>
-  getDefaultForegroundColor(surfaceColor, streamDocument) ?? {
-    selectedColor: surfaceColor.contrastingColor || "black",
-    contrastingColor: surfaceColor.selectedColor,
-  };
-
-export const resolveTextColor = (
-  fontColor: ThemeColor | undefined,
-  surfaceColor: ThemeColor,
-  streamDocument?: StreamDocument | Record<string, unknown>,
-): string | undefined => {
-  const color = hasExplicitThemeColor(fontColor)
-    ? fontColor
-    : getReadableForegroundColor(surfaceColor, streamDocument);
-  return getThemeColorCssValue(color.selectedColor);
+export const defaultTextStyles: StyledTextValue = {
+  fontFamily: "default",
+  fontSize: "default",
+  fontWeight: "default",
+  fontStyle: "default",
+  textTransform: "default",
 };
 
-export const getTextStyle = (
+const isRichText = (value: unknown): value is RichText =>
+  Boolean(
+    value &&
+    typeof value === "object" &&
+    (("html" in value && typeof value.html === "string") ||
+      ("json" in value && typeof value.json === "string")),
+  );
+
+export const renderRichText = (
+  value: unknown,
+  text: StyledTextValue,
+  className?: string,
+): React.ReactNode => {
+  const content = isRichText(value) ? (
+    <MaybeRTF data={value} />
+  ) : React.isValidElement(value) || typeof value === "string" ? (
+    value
+  ) : null;
+
+  const rendered = renderStyledRichText({ content, text, className });
+  if (!React.isValidElement<{ className?: string }>(rendered)) {
+    return rendered;
+  }
+
+  // A new .components scope resets these variables to !important editor theme
+  // defaults. Inherit the section's theme so the selected typography can apply.
+  return React.cloneElement(rendered, {
+    className: rendered.props.className
+      ?.split(/\s+/)
+      .filter((name) => name !== "components")
+      .join(" "),
+  });
+};
+
+/** Use the selected text color, otherwise the section's contrasting color. */
+export const resolveTextColor = (
+  styles: Pick<StyledTextValue, "color">,
+  fallbackColor?: ThemeColor | string,
+): ThemeColor | undefined => {
+  if (normalizeThemeColorToken(styles.color)) {
+    return styles.color;
+  }
+  const fallbackToken = normalizeThemeColorToken(fallbackColor);
+  return fallbackToken
+    ? typeof fallbackColor === "string"
+      ? { selectedColor: fallbackToken, contrastingColor: "default" }
+      : fallbackColor
+    : undefined;
+};
+
+export const resolveRichTextStyles = (
   styles: StyledTextValue,
-  fontColor?: ThemeColor,
-  surfaceColor?: ThemeColor,
-  streamDocument?: StreamDocument | Record<string, unknown>,
-): React.CSSProperties => ({
-  color: surfaceColor
-    ? resolveTextColor(fontColor, surfaceColor, streamDocument)
-    : getThemeColorCssValue(fontColor),
+  fallbackColor?: ThemeColor | string,
+): StyledTextValue => ({
+  ...styles,
+  color: resolveTextColor(styles, fallbackColor),
+});
+
+export const hasExplicitThemeColor = (color?: ThemeColor): color is ThemeColor =>
+  Boolean(color?.selectedColor && color.selectedColor !== "default");
+
+export const getTextStyle = (styles: StyledTextValue): React.CSSProperties => ({
+  color: getThemeColorCssValue(resolveTextColor(styles)),
   fontFamily: styles.fontFamily === "default" ? undefined : styles.fontFamily,
   fontSize: styles.fontSize === "default" ? undefined : styles.fontSize,
   fontStyle: styles.fontStyle === "default" ? undefined : styles.fontStyle,
@@ -51,46 +87,3 @@ export const getTextStyle = (
   textTransform:
     styles.textTransform === "default" ? undefined : styles.textTransform,
 });
-
-export const renderRichText = (
-  value: unknown,
-  richTextStyleOverrides?: MaybeRTFProps["richTextStyleOverrides"],
-  containerProps?: React.HTMLAttributes<HTMLDivElement>,
-): React.ReactNode => {
-  if (React.isValidElement(value)) {
-    const elementStyle = richTextStyleOverrides
-      ? {
-          ...richTextStyleOverrides,
-          color:
-            typeof richTextStyleOverrides.color === "object"
-              ? getThemeColorCssValue(richTextStyleOverrides.color)
-              : richTextStyleOverrides.color,
-        }
-      : undefined;
-    const element = elementStyle
-      ? React.cloneElement(
-          value as React.ReactElement<{ style?: React.CSSProperties }>,
-          {
-            style: {
-              ...(value.props as { style?: React.CSSProperties }).style,
-              ...(elementStyle as React.CSSProperties),
-            },
-          },
-        )
-      : value;
-    return containerProps ? <div {...containerProps}>{element}</div> : element;
-  }
-
-  const data =
-    typeof value === "string" ||
-    (typeof value === "object" && value !== null && "html" in value)
-      ? (value as RichText | string)
-      : undefined;
-  return (
-    <MaybeRTF
-      {...containerProps}
-      data={data}
-      richTextStyleOverrides={richTextStyleOverrides}
-    />
-  );
-};

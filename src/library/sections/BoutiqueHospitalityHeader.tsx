@@ -1,3 +1,4 @@
+import { pt } from "@yext/visual-editor";
 import type { SectionConfig } from "@yext/visual-editor";
 
 import * as React from "react";
@@ -101,9 +102,9 @@ type BoutiqueHospitalityHeaderProps = {
 };
 
 const linkTypeOptions: Array<{ label: string; value: LinkType }> = [
-  { label: "URL", value: "URL" },
-  { label: "Phone", value: "PHONE" },
-  { label: "Email", value: "EMAIL" },
+  { label: msg("fields.options.url", "URL"), value: "URL" },
+  { label: msg("fields.options.phone", "Phone"), value: "PHONE" },
+  { label: msg("fields.options.email", "Email"), value: "EMAIL" },
 ];
 const defaultLinkStyles: StyledLinkValue = {
   fontFamily: "default",
@@ -353,14 +354,14 @@ const BoutiqueHospitalityHeaderFields: YextFields<BoutiqueHospitalityHeaderProps
             },
           },
           defaultItemProps: (index: number) => ({
-            label: `Link ${index + 1}`,
+            label: pt("linkWithIndex", "Link {{index}}", { index: index + 1 }),
             link: "#",
             linkType: "URL",
             normalizeLink: false,
             openInNewTab: false,
           }),
           getItemSummary: (item: SharedHeaderLink, index?: number) =>
-            getTranslatableSummary(item.label, `Link ${index ?? 0}`),
+            getTranslatableSummary(item.label, pt("linkWithIndex", "Link {{index}}", { index: (index ?? 0) + 1 })),
         },
         fontColor: {
           label: msg("fields.fontColor", "Font Color"),
@@ -452,14 +453,14 @@ const BoutiqueHospitalityHeaderFields: YextFields<BoutiqueHospitalityHeaderProps
           },
           defaultItemProps: (index: number) => ({
             iconImage: defaultUtilityIconImage,
-            label: `Item ${index + 1}`,
+            label: pt("itemWithIndex", "Item {{index}}", { index: index + 1 }),
             link: "#",
             linkType: "URL",
             normalizeLink: false,
             openInNewTab: false,
           }),
           getItemSummary: (item: SharedHeaderAction, index?: number) =>
-            getTranslatableSummary(item.label, `Action ${index ?? 0}`),
+            getTranslatableSummary(item.label, pt("actionWithIndex", "Action {{index}}", { index: (index ?? 0) + 1 })),
         },
       },
     },
@@ -519,7 +520,7 @@ const BoutiqueHospitalityHeaderFields: YextFields<BoutiqueHospitalityHeaderProps
           ) =>
             getTranslatableSummary(
               item.cta?.data?.cta?.constantValue?.label,
-              `CTA ${index ?? 0}`,
+              pt("ctaWithIndex", "CTA {{index}}", { index: (index ?? 0) + 1 }),
             ),
         },
       },
@@ -731,7 +732,7 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<
 
     return (
       <EntityField
-        displayName="Utility Icon Image"
+        displayName={pt("fields.utilityIconImage", "Utility Icon Image")}
         fieldId={iconImageProps.image.field}
         constantValueEnabled={iconImageProps.image.constantValueEnabled}
       >
@@ -782,7 +783,7 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<
           {ctaItems.map((item, index) => (
             <EntityField
               key={`desktop-cta-${index}`}
-              displayName="Header Call to Action"
+              displayName={pt("fields.headerCallToAction", "Header Call to Action")}
               fieldId={item.cta.data.cta.field}
               constantValueEnabled={item.cta.data.cta.constantValueEnabled}
             >
@@ -837,7 +838,7 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<
 
     const logoContent = (
       <EntityField
-        displayName="Logo Image"
+        displayName={pt("fields.logoImage", "Logo Image")}
         fieldId={props.logoImage.image.field}
         constantValueEnabled={props.logoImage.image.constantValueEnabled}
       >
@@ -858,7 +859,7 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<
 
     return logoUrl ? (
       <EntityField
-        displayName="Logo URL"
+        displayName={pt("fields.logoURL", "Logo URL")}
         fieldId={props.logoImage.url.field}
         constantValueEnabled={props.logoImage.url.constantValueEnabled}
       >
@@ -869,7 +870,7 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<
           }}
           eventName="headerLogo"
           className="inline-flex transition-opacity hover:opacity-80"
-          aria-label="Logo"
+          aria-label={pt("logo", "Logo")}
         >
           {logoContent}
         </Link>
@@ -970,7 +971,7 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<
           {showCta && topBarCtaItem ? (
             <div className="hidden items-center gap-3 md:flex">
               <EntityField
-                displayName="Header Call to Action"
+                displayName={pt("fields.headerCallToAction", "Header Call to Action")}
                 fieldId={topBarCtaItem.cta.data.cta.field}
                 constantValueEnabled={
                   topBarCtaItem.cta.data.cta.constantValueEnabled
@@ -1043,7 +1044,7 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<
                       {drawerCtaItems.map((item, index) => (
                         <EntityField
                           key={`tablet-cta-${index}`}
-                          displayName="Header Call to Action"
+                          displayName={pt("fields.headerCallToAction", "Header Call to Action")}
                           fieldId={item.cta.data.cta.field}
                           constantValueEnabled={
                             item.cta.data.cta.constantValueEnabled
@@ -1063,7 +1064,7 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<
                       {mobileDrawerCtaItems.map((item, index) => (
                         <EntityField
                           key={`mobile-cta-${index}`}
-                          displayName="Header Call to Action"
+                          displayName={pt("fields.headerCallToAction", "Header Call to Action")}
                           fieldId={item.cta.data.cta.field}
                           constantValueEnabled={
                             item.cta.data.cta.constantValueEnabled
@@ -1130,7 +1131,7 @@ const BoutiqueHospitalityHeaderComponent: PuckComponent<
 
 export const BoutiqueHospitalityHeader: YextComponentConfig<BoutiqueHospitalityHeaderProps> =
   {
-    label: "Header",
+    label: msg("components.header", "Header"),
     fields: BoutiqueHospitalityHeaderFields,
     defaultProps: {
       section: {
