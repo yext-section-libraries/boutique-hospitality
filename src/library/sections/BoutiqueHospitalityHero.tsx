@@ -1,3 +1,4 @@
+import { pt } from "@yext/visual-editor";
 import type { SectionConfig } from "@yext/visual-editor";
 
 import * as React from "react";
@@ -29,19 +30,19 @@ import {
 } from "@yext/visual-editor";
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
 import { useTranslation } from "react-i18next";
+import { formatRating, getLocalizedCountOptions } from "../shared/localization";
 import { createCta } from "../shared/createCta";
 import { aspectRatioOptions } from "../shared/fieldOptions";
+import { getTextStyle, renderRichText, resolveRichTextStyles } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<string>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type StyledRtfProps = {
   text: YextEntityField<TranslatableRichText>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type HeroImageProps = {
@@ -113,11 +114,10 @@ const HeroFields: YextFields<BoutiqueHospitalityHeroProps> = {
         label: msg("fields.text", "Text"),
         filter: { types: ["type.string"] },
       },
-      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-      fontColor: {
-        label: msg("fields.fontColor", "Font Color"),
-        type: "basicSelector",
-        options: "SITE_COLOR",
+      styles: {
+        label: msg("fields.textStyles", "Text Styles"),
+        type: "styledText",
+        includeColor: true,
       },
     },
   },
@@ -130,11 +130,10 @@ const HeroFields: YextFields<BoutiqueHospitalityHeroProps> = {
         label: msg("fields.text", "Text"),
         filter: { types: ["type.string"] },
       },
-      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-      fontColor: {
-        label: msg("fields.fontColor", "Font Color"),
-        type: "basicSelector",
-        options: "SITE_COLOR",
+      styles: {
+        label: msg("fields.textStyles", "Text Styles"),
+        type: "styledText",
+        includeColor: true,
       },
     },
   },
@@ -147,11 +146,10 @@ const HeroFields: YextFields<BoutiqueHospitalityHeroProps> = {
         label: msg("fields.text", "Text"),
         filter: { types: ["type.string"] },
       },
-      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-      fontColor: {
-        label: msg("fields.fontColor", "Font Color"),
-        type: "basicSelector",
-        options: "SITE_COLOR",
+      styles: {
+        label: msg("fields.textStyles", "Text Styles"),
+        type: "styledText",
+        includeColor: true,
       },
     },
   },
@@ -164,11 +162,10 @@ const HeroFields: YextFields<BoutiqueHospitalityHeroProps> = {
         label: msg("fields.text", "Text"),
         filter: { types: ["type.rich_text_v2"] },
       },
-      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-      fontColor: {
-        label: msg("fields.fontColor", "Font Color"),
-        type: "basicSelector",
-        options: "SITE_COLOR",
+      styles: {
+        label: msg("fields.textStyles", "Text Styles"),
+        type: "styledText",
+        includeColor: true,
       },
     },
   },
@@ -221,7 +218,7 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
   puck,
 }) => {
   const streamDocument = useDocument<BoutiqueHospitalityHeroDocument>();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const locale = streamDocument.locale ?? "en";
   const resolvedHeroImage = resolveComponentData(
     heroImage.image,
@@ -253,13 +250,13 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
     getDefaultForegroundColor(section.backgroundColor, streamDocument),
   );
   const availabilityBadgeColor =
-    normalizeThemeColorToken(availabilityBadge.fontColor) === "default"
+    normalizeThemeColorToken(availabilityBadge.styles.color) === "default"
       ? shellForeground
-      : (getThemeColorCssValue(availabilityBadge.fontColor) ?? shellForeground);
+      : (getThemeColorCssValue(availabilityBadge.styles.color) ?? shellForeground);
   const brandLineColor =
-    normalizeThemeColorToken(brandLine.fontColor) === "default"
+    normalizeThemeColorToken(brandLine.styles.color) === "default"
       ? shellForeground
-      : (getThemeColorCssValue(brandLine.fontColor) ?? shellForeground);
+      : (getThemeColorCssValue(brandLine.styles.color) ?? shellForeground);
   const availabilityBadgeTextStyle: React.CSSProperties = {
     fontFamily:
       availabilityBadge.styles.fontFamily === "default"
@@ -288,7 +285,7 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
     color: availabilityBadgeColor,
   };
   const placeLineColor =
-    getThemeColorCssValue(placeLine.fontColor) ?? shellForeground;
+    getThemeColorCssValue(placeLine.styles.color) ?? shellForeground;
   const placeLineFontFamily =
     placeLine.styles.fontFamily === "default"
       ? 'var(--fontFamily-h1-fontFamily, "Fraunces", serif)'
@@ -318,7 +315,7 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
     color: placeLineColor,
   };
   const descriptionColor =
-    getThemeColorCssValue(description.fontColor) ?? shellForeground;
+    getThemeColorCssValue(description.styles.color) ?? shellForeground;
   const descriptionFontFamily =
     description.styles.fontFamily === "default"
       ? 'var(--fontFamily-body-fontFamily, "Inter", sans-serif)'
@@ -347,9 +344,13 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
     fontStyle: descriptionFontStyle,
     textTransform: descriptionTextTransform,
   };
-  const descriptionContent = React.isValidElement(resolvedDescription)
-    ? resolvedDescription
-    : (resolvedDescription ?? null);
+  const descriptionContent = renderRichText(
+    resolvedDescription,
+    resolveRichTextStyles(
+      description.styles,
+      getDefaultForegroundColor(section.backgroundColor, streamDocument),
+    ),
+  );
   const heroImageUrl: string | undefined =
     resolvedHeroImage && typeof resolvedHeroImage === "object"
       ? "url" in resolvedHeroImage && typeof resolvedHeroImage.url === "string"
@@ -380,7 +381,7 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
               position: relative;
               overflow: hidden;
               border-bottom: 1px solid currentColor;
-              background: ${overlayBackground};
+              background: var(--ybh-hero-overlay-background);
             }
             .ybh-hero-grid {
               display: grid;
@@ -395,8 +396,8 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
               z-index: 1;
               background: linear-gradient(
                 90deg,
-                ${overlayBackground} 0%,
-                ${overlayBackground} 55%,
+                var(--ybh-hero-overlay-background) 0%,
+                var(--ybh-hero-overlay-background) 55%,
                 transparent 100%
               );
             }
@@ -431,50 +432,39 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
               display: flex;
               flex-direction: column;
               gap: 6px;
-              color: ${shellForeground};
+              color: var(--ybh-hero-shell-foreground);
             }
             .ybh-hero-title-brand {
-              color: ${brandLineColor};
-              font-family: var(--fontFamily-h2-fontFamily, "Fraunces", serif);
+              color: var(--ybh-hero-brand-line-color);
+              font-family: var(--fontFamily-h2-fontFamily, Fraunces, serif);
               font-size: clamp(1.4rem, 2vw, 2.1rem);
             }
             .ybh-hero-title-place {
-              color: ${placeLineColor};
-              font-family: ${placeLineFontFamily};
-              font-size: ${placeLineFontSize};
-              font-weight: ${placeLineFontWeight ?? "inherit"};
-              font-style: ${placeLineFontStyle};
-              text-transform: ${placeLineTextTransform ?? "none"};
+              color: var(--ybh-hero-place-line-color);
+              font-family: var(--ybh-hero-place-line-font-family);
+              font-size: var(--ybh-hero-place-line-font-size);
+              font-weight: var(--ybh-hero-place-line-font-weight);
+              font-style: var(--ybh-hero-place-line-font-style);
+              text-transform: var(--ybh-hero-place-line-text-transform);
               line-height: 0.95;
             }
             .ybh-hero-description {
-              color: ${descriptionColor};
-              font-family: ${descriptionFontFamily};
-              font-size: ${descriptionFontSize};
-              font-weight: ${descriptionFontWeight ?? "inherit"};
-              font-style: ${descriptionFontStyle ?? "normal"};
-              text-transform: ${descriptionTextTransform ?? "none"};
+              color: var(--ybh-hero-description-color);
+              font-family: var(--ybh-hero-description-font-family);
+              font-size: var(--ybh-hero-description-font-size);
+              font-weight: var(--ybh-hero-description-font-weight);
+              font-style: var(--ybh-hero-description-font-style);
+              text-transform: var(--ybh-hero-description-text-transform);
               line-height: 1.75;
               max-width: 46ch;
-            }
-            .ybh-hero-description .MaybeRTF,
-            .ybh-hero-description .MaybeRTF *,
-            .ybh-hero-description .rtf-theme,
-            .ybh-hero-description .rtf-theme * {
-              color: inherit !important;
-              font-family: inherit !important;
-              font-size: inherit !important;
-              font-weight: inherit !important;
-              font-style: inherit !important;
-              text-transform: inherit !important;
             }
             .ybh-hero-rating {
               display: flex;
               flex-wrap: wrap;
               gap: 10px;
               align-items: center;
-              color: ${shellForeground};
-              font-family: var(--fontFamily-body-fontFamily, "Inter", sans-serif);
+              color: var(--ybh-hero-shell-foreground);
+              font-family: var(--fontFamily-body-fontFamily, Inter, sans-serif);
               font-size: 0.92rem;
             }
             .ybh-hero-stars {
@@ -523,8 +513,8 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
               .ybh-hero-overlay {
                 background: linear-gradient(
                   180deg,
-                  ${overlayBackground} 0%,
-                  ${overlayBackground} 45%,
+                  var(--ybh-hero-overlay-background) 0%,
+                  var(--ybh-hero-overlay-background) 45%,
                   transparent 100%
                 );
               }
@@ -553,10 +543,6 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
                 flex-direction: column;
                 align-items: stretch;
               }
-              .ybh-hero-ctas > *,
-              .ybh-hero-cta {
-                width: 100%;
-              }
               .ybh-hero-copy {
                 padding: 24px 20px 40px;
               }
@@ -581,7 +567,24 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
           as="section"
           className="ybh-hero-shell"
           background={section.backgroundColor}
-          style={sectionSurfaceStyle}
+          style={{
+            ...sectionSurfaceStyle,
+            "--ybh-hero-overlay-background": overlayBackground,
+            "--ybh-hero-shell-foreground": shellForeground,
+            "--ybh-hero-brand-line-color": brandLineColor,
+            "--ybh-hero-place-line-color": placeLineColor,
+            "--ybh-hero-place-line-font-family": placeLineFontFamily,
+            "--ybh-hero-place-line-font-size": placeLineFontSize,
+            "--ybh-hero-place-line-font-weight": placeLineFontWeight ?? "inherit",
+            "--ybh-hero-place-line-font-style": placeLineFontStyle,
+            "--ybh-hero-place-line-text-transform": placeLineTextTransform ?? "none",
+            "--ybh-hero-description-color": descriptionColor,
+            "--ybh-hero-description-font-family": descriptionFontFamily,
+            "--ybh-hero-description-font-size": descriptionFontSize,
+            "--ybh-hero-description-font-weight": descriptionFontWeight ?? "inherit",
+            "--ybh-hero-description-font-style": descriptionFontStyle ?? "normal",
+            "--ybh-hero-description-text-transform": descriptionTextTransform ?? "none",
+          } as React.CSSProperties}
         >
           <div className="ybh-hero-grid">
             <div className="ybh-hero-overlay" aria-hidden />
@@ -589,7 +592,7 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
               <div className="ybh-hero-copy-inner">
                 <div className="ybh-hero-copy-card">
                   <EntityField
-                    displayName="Availability Badge"
+                    displayName={pt("fields.availabilityBadge", "Availability Badge")}
                     fieldId={availabilityBadge.text.field}
                     constantValueEnabled={
                       availabilityBadge.text.constantValueEnabled
@@ -604,16 +607,16 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
                   </EntityField>
                   <h1 className="ybh-hero-title">
                     <EntityField
-                      displayName="Brand Line"
+                      displayName={pt("fields.brandLine", "Brand Line")}
                       fieldId={brandLine.text.field}
                       constantValueEnabled={brandLine.text.constantValueEnabled}
                     >
-                      <span className="ybh-hero-title-brand">
+                      <span className="ybh-hero-title-brand" style={getTextStyle(brandLine.styles)}>
                         {resolvedBrandLine}
                       </span>
                     </EntityField>
                     <EntityField
-                      displayName="Place Line"
+                      displayName={pt("fields.placeLine", "Place Line")}
                       fieldId={placeLine.text.field}
                       constantValueEnabled={placeLine.text.constantValueEnabled}
                     >
@@ -626,7 +629,7 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
                     </EntityField>
                   </h1>
                   <EntityField
-                    displayName="Description"
+                    displayName={pt("fields.description", "Description")}
                     fieldId={description.text.field}
                     constantValueEnabled={description.text.constantValueEnabled}
                   >
@@ -643,7 +646,7 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
                         {t("ratingInStars", {
                           defaultValue: "{{rating}} Stars",
                           rating:
-                            averageRating?.toFixed?.(1) ?? averageRating,
+                            formatRating(averageRating, i18n.language),
                         })}
                       </span>
                       <span className="ybh-hero-stars">
@@ -652,14 +655,15 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
                       <span>
                         {t("guestReviews", {
                           defaultValue: "{{count}} guest reviews",
+                          ...getLocalizedCountOptions(reviewCount, i18n.language),
                           count: reviewCount,
                         })}
                       </span>
                     </div>
                   ) : null}
-                  <div className="ybh-hero-ctas">
+                  <div className="ybh-hero-ctas max-[1023px]:[&>*]:w-full">
                     <EntityField
-                      displayName="Primary Call to Action"
+                      displayName={pt("fields.primaryCallToAction", "Primary Call to Action")}
                       fieldId={primaryCta.data.cta.field}
                       constantValueEnabled={
                         primaryCta.data.cta.constantValueEnabled
@@ -670,12 +674,12 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
                           data: primaryCta.data,
                           styles: primaryCta.styles,
                         }}
-                        className="ybh-hero-cta"
+                        className="ybh-hero-cta max-[1023px]:w-full"
                         eventName="heroPrimaryCta"
                       />
                     </EntityField>
                     <EntityField
-                      displayName="Secondary Call to Action"
+                      displayName={pt("fields.secondaryCallToAction", "Secondary Call to Action")}
                       fieldId={secondaryCta.data.cta.field}
                       constantValueEnabled={
                         secondaryCta.data.cta.constantValueEnabled
@@ -686,7 +690,7 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
                           data: secondaryCta.data,
                           styles: secondaryCta.styles,
                         }}
-                        className="ybh-hero-cta"
+                        className="ybh-hero-cta max-[1023px]:w-full"
                         eventName="heroSecondaryCta"
                       />
                     </EntityField>
@@ -696,7 +700,7 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
             </div>
             <div className="ybh-hero-media">
               <EntityField
-                displayName="Hero Image"
+                displayName={pt("fields.heroImage", "Hero Image")}
                 fieldId={heroImage.image.field}
                 constantValueEnabled={heroImage.image.constantValueEnabled}
               >
@@ -716,7 +720,7 @@ const BoutiqueHospitalityHeroComponent: PuckComponent<
 
 export const BoutiqueHospitalityHero: YextComponentConfig<BoutiqueHospitalityHeroProps> =
   {
-    label: "Hero",
+    label: msg("components.hero", "Hero"),
     fields: HeroFields,
     defaultProps: {
       section: {
@@ -739,7 +743,6 @@ export const BoutiqueHospitalityHero: YextComponentConfig<BoutiqueHospitalityHer
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       brandLine: {
         text: {
@@ -753,11 +756,11 @@ export const BoutiqueHospitalityHero: YextComponentConfig<BoutiqueHospitalityHer
           fontWeight: "default",
           fontStyle: "default",
           textTransform: "default",
-        },
-        fontColor: {
-          selectedColor: "palette-primary",
-          contrastingColor: "palette-primary-contrast",
-          isDarkColor: false,
+          color: {
+            selectedColor: "palette-primary",
+            contrastingColor: "palette-primary-contrast",
+            isDarkColor: false,
+          },
         },
       },
       placeLine: {
@@ -773,7 +776,6 @@ export const BoutiqueHospitalityHero: YextComponentConfig<BoutiqueHospitalityHer
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       description: {
         text: {
@@ -793,7 +795,6 @@ export const BoutiqueHospitalityHero: YextComponentConfig<BoutiqueHospitalityHer
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       heroImage: {
         image: {

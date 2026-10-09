@@ -27,12 +27,10 @@ import {
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type TrailStyleProps = {
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
   currentPageColor?: ThemeColor;
   separatorColor?: ThemeColor;
 };
@@ -84,11 +82,7 @@ const BreadcrumbsFields: YextFields<BoutiqueHospitalityBreadcrumbsProps> = {
       styles: {
         label: msg("fields.textStyles", "Text Styles"),
         type: "styledText",
-      },
-      fontColor: {
-        label: msg("fields.fontColor", "Font Color"),
-        type: "basicSelector",
-        options: "SITE_COLOR",
+        includeColor: true,
       },
     },
   },
@@ -107,11 +101,7 @@ const BreadcrumbsFields: YextFields<BoutiqueHospitalityBreadcrumbsProps> = {
       styles: {
         label: msg("fields.textStyles", "Text Styles"),
         type: "styledText",
-      },
-      fontColor: {
-        label: msg("fields.fontColor", "Font Color"),
-        type: "basicSelector",
-        options: "SITE_COLOR",
+        includeColor: true,
       },
       currentPageColor: {
         label: msg("fields.currentPageColor", "Current Page Color"),
@@ -145,9 +135,9 @@ const BoutiqueHospitalityBreadcrumbsComponent: PuckComponent<
       getDefaultForegroundColor(section.backgroundColor, streamDocument),
     );
     const rootLabelColor =
-      getThemeColorCssValue(directoryRoot.fontColor) ?? defaultTextColor;
+      getThemeColorCssValue(directoryRoot.styles.color) ?? defaultTextColor;
     const trailColor =
-      getThemeColorCssValue(trailStyles.fontColor) ?? defaultTextColor;
+      getThemeColorCssValue(trailStyles.styles.color) ?? defaultTextColor;
     const currentPageColor =
       getThemeColorCssValue(trailStyles.currentPageColor) ?? trailColor;
     const separatorColor =
@@ -238,7 +228,7 @@ const BoutiqueHospitalityBreadcrumbsComponent: PuckComponent<
                 }
                 .ybh-breadcrumbs-empty {
                   margin: 0;
-                  font-family: var(--fontFamily-body-fontFamily, "DM Sans", sans-serif);
+                  font-family: var(--fontFamily-body-fontFamily, DM Sans, sans-serif);
                   font-size: 0.8rem;
                   letter-spacing: 0.16em;
                   line-height: 1.4;
@@ -300,7 +290,7 @@ const BoutiqueHospitalityBreadcrumbsComponent: PuckComponent<
             }
             .ybh-breadcrumbs-link,
             .ybh-breadcrumbs-current {
-              font-family: var(--fontFamily-body-fontFamily, "DM Sans", sans-serif);
+              font-family: var(--fontFamily-body-fontFamily, DM Sans, sans-serif);
               font-size: 0.8rem;
               line-height: 1.4;
               letter-spacing: 0.18em;
@@ -316,7 +306,7 @@ const BoutiqueHospitalityBreadcrumbsComponent: PuckComponent<
               opacity: 0.72;
             }
             .ybh-breadcrumbs-current {
-              font-family: var(--fontFamily-h6-fontFamily, var(--fontFamily-body-fontFamily, "DM Sans", sans-serif));
+              font-family: var(--fontFamily-h6-fontFamily, var(--fontFamily-body-fontFamily, DM Sans, sans-serif));
               font-weight: 600;
             }
             .ybh-breadcrumbs-separator {
@@ -378,7 +368,7 @@ const BoutiqueHospitalityBreadcrumbsComponent: PuckComponent<
                       ) : null}
                       {isCurrentPage ? (
                         <EntityField
-                          displayName="Current Page"
+                          displayName={pt("fields.currentPage", "Current Page")}
                           fieldId="name"
                           constantValueEnabled={false}
                         >
@@ -395,7 +385,7 @@ const BoutiqueHospitalityBreadcrumbsComponent: PuckComponent<
                         </EntityField>
                       ) : isRoot ? (
                         <EntityField
-                          displayName="Directory Root"
+                          displayName={pt("fields.directoryRoot", "Directory Root")}
                           fieldId={directoryRoot.text.field}
                           constantValueEnabled={
                             directoryRoot.text.constantValueEnabled
@@ -440,7 +430,7 @@ const BoutiqueHospitalityBreadcrumbsComponent: PuckComponent<
 
 export const BoutiqueHospitalityBreadcrumbs: YextComponentConfig<BoutiqueHospitalityBreadcrumbsProps> =
   {
-    label: "Breadcrumbs",
+    label: msg("components.breadcrumbs", "Breadcrumbs"),
     fields: BreadcrumbsFields,
     defaultProps: {
       section: {
@@ -462,10 +452,10 @@ export const BoutiqueHospitalityBreadcrumbs: YextComponentConfig<BoutiqueHospita
           fontWeight: "default",
           fontStyle: "default",
           textTransform: "uppercase",
-        },
-        fontColor: {
-          selectedColor: "palette-primary",
-          contrastingColor: "palette-primary-contrast",
+          color: {
+            selectedColor: "palette-primary",
+            contrastingColor: "palette-primary-contrast",
+          },
         },
       },
       includeCurrentPage: true,
@@ -477,7 +467,6 @@ export const BoutiqueHospitalityBreadcrumbs: YextComponentConfig<BoutiqueHospita
           fontStyle: "default",
           textTransform: "uppercase",
         },
-        fontColor: undefined,
         currentPageColor: {
           selectedColor: "palette-primary",
           contrastingColor: "palette-primary-contrast",
