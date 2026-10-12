@@ -280,12 +280,12 @@
             "fontStyle": "default",
             "fontFamily": "default",
             "fontWeight": "default",
-            "textTransform": "default"
-          },
-          "fontColor": {
-            "isDarkColor": false,
-            "selectedColor": "palette-primary",
-            "contrastingColor": "palette-primary-contrast"
+            "textTransform": "default",
+            "color": {
+              "isDarkColor": false,
+              "selectedColor": "palette-primary",
+              "contrastingColor": "palette-primary-contrast"
+            }
           }
         },
         "phones": {

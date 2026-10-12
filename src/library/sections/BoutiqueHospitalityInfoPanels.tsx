@@ -1,3 +1,4 @@
+import { pt } from "@yext/visual-editor";
 import type { SectionConfig } from "@yext/visual-editor";
 
 import * as React from "react";
@@ -39,7 +40,7 @@ import {
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
 import { formatPhoneNumber } from "@yext/visual-editor/section-library-support";
 import { createCta } from "../shared/createCta";
-import { renderRichText } from "../shared/sectionStyles";
+import { renderRichText, resolveRichTextStyles } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
@@ -55,7 +56,6 @@ type StyledTextListProps = {
 
 type PanelTextStyleProps = {
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type ImageFieldProps = {
@@ -258,7 +258,7 @@ const InfoPanelsFields: YextFields<BoutiqueHospitalityInfoPanelsProps> = {
                 ? item.label.constantValue
                 : item.label?.field) ||
               item.number?.field ||
-              "Phone",
+              pt("fields.phone", "Phone"),
           },
           phoneFormat: {
             label: msg("fields.phoneFormat", "Phone Format"),
@@ -452,11 +452,10 @@ const InfoPanelsFields: YextFields<BoutiqueHospitalityInfoPanelsProps> = {
         label: msg("fields.heading", "Heading"),
         type: "object",
         objectFields: {
-          styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-          fontColor: {
-            label: msg("fields.fontColor", "Font Color"),
-            type: "basicSelector",
-            options: "SITE_COLOR",
+          styles: {
+            label: msg("fields.textStyles", "Text Styles"),
+            type: "styledText",
+            includeColor: true,
           },
         },
       },
@@ -464,11 +463,10 @@ const InfoPanelsFields: YextFields<BoutiqueHospitalityInfoPanelsProps> = {
         label: msg("fields.text", "Text"),
         type: "object",
         objectFields: {
-          styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-          fontColor: {
-            label: msg("fields.fontColor", "Font Color"),
-            type: "basicSelector",
-            options: "SITE_COLOR",
+          styles: {
+            label: msg("fields.textStyles", "Text Styles"),
+            type: "styledText",
+            includeColor: true,
           },
         },
       },
@@ -476,11 +474,10 @@ const InfoPanelsFields: YextFields<BoutiqueHospitalityInfoPanelsProps> = {
         label: msg("fields.labels", "Labels"),
         type: "object",
         objectFields: {
-          styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-          fontColor: {
-            label: msg("fields.fontColor", "Font Color"),
-            type: "basicSelector",
-            options: "SITE_COLOR",
+          styles: {
+            label: msg("fields.textStyles", "Text Styles"),
+            type: "styledText",
+            includeColor: true,
           },
         },
       },
@@ -515,12 +512,12 @@ const PanelImage = ({
   }
   return (
     <EntityField
-      displayName="Panel Image"
+      displayName={pt("fields.panelImage", "Panel Image")}
       fieldId={image.image.field}
       constantValueEnabled={image.image.constantValueEnabled}
     >
       <div className="ybh-info-panel-image">
-        <div className="ybh-info-panel-media">
+        <div className="ybh-info-panel-media [&>div]:h-full">
           <Image
             image={
               resolvedImage as
@@ -574,10 +571,10 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
   const cardTextColor = getThemeColorCssValue(
     getDefaultForegroundColor(section.panelBackgroundColor, streamDocument),
   );
-  const summaryRichTextStyleOverrides = {
-    ...panelStyles.text.styles,
-    color: getThemeColorCssValue(panelStyles.text.fontColor) ?? cardTextColor,
-  };
+  const summaryRichTextStyleOverrides = resolveRichTextStyles(
+    panelStyles.text.styles,
+    getDefaultForegroundColor(section.panelBackgroundColor, streamDocument),
+  );
   const resolvedSummaryHeading =
     resolveComponentData(summaryCard.heading.text, locale, streamDocument, {
       output: "plainText",
@@ -651,7 +648,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
     marginTop: 0,
     marginBottom: "0.8em",
     color:
-      getThemeColorCssValue(panelStyles.heading.fontColor) ?? cardTextColor,
+      getThemeColorCssValue(panelStyles.heading.styles.color) ?? cardTextColor,
     fontFamily:
       panelStyles.heading.styles.fontFamily === "default"
         ? 'var(--fontFamily-h2-fontFamily, "Fraunces", serif)'
@@ -675,7 +672,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
     lineHeight: 1.05,
   };
   const panelTextStyle: React.CSSProperties = {
-    color: getThemeColorCssValue(panelStyles.text.fontColor) ?? cardTextColor,
+    color: getThemeColorCssValue(panelStyles.text.styles.color) ?? cardTextColor,
     fontFamily:
       panelStyles.text.styles.fontFamily === "default"
         ? undefined
@@ -698,7 +695,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
         : panelStyles.text.styles.textTransform,
   };
   const panelLabelStyle: React.CSSProperties = {
-    color: getThemeColorCssValue(panelStyles.label.fontColor) ?? cardTextColor,
+    color: getThemeColorCssValue(panelStyles.label.styles.color) ?? cardTextColor,
     fontFamily:
       panelStyles.label.styles.fontFamily === "default"
         ? undefined
@@ -794,9 +791,6 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
             height: 100%;
             min-height: 320px;
           }
-          .ybh-info-panel-media > div {
-            height: 100%;
-          }
           .ybh-info-panel-media-overlay {
             position: absolute;
             inset: 0;
@@ -805,7 +799,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
           .ybh-info-panel-card {
             padding: 22px;
             border: 1px solid currentColor;
-            background: ${panelBackgroundColor};
+            background: var(--ybh-info-panel-background-color);
           }
           .ybh-info-grid {
             display: grid;
@@ -897,11 +891,6 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
             }
           }
           @media (max-width: 899px) {
-            .ybh-info-panel {
-              grid-template-areas:
-                "image"
-                "card";
-            }
             .ybh-info-panel-image {
               max-height: 200px;
               height: 200px;
@@ -936,10 +925,14 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
           as="section"
           className="ybh-info-shell"
           background={section.backgroundColor}
-          style={getSurfaceColorStyle(section.backgroundColor, streamDocument)}
+          style={{
+            ...getSurfaceColorStyle(section.backgroundColor, streamDocument),
+            "--ybh-info-panel-background-color": panelBackgroundColor,
+            "--ybh-info-mobile-grid-areas": '"image" "card"',
+          } as React.CSSProperties}
         >
           <div className="ybh-info-track">
-            <article className="ybh-info-panel">
+            <article className="ybh-info-panel max-[899px]:[grid-template-areas:var(--ybh-info-mobile-grid-areas)]">
               <Background
                 className="ybh-info-panel-card"
                 background={section.panelBackgroundColor}
@@ -949,7 +942,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                 )}
               >
                 <EntityField
-                  displayName="Summary Heading"
+                  displayName={pt("fields.summaryHeading", "Summary Heading")}
                   fieldId={summaryCard.heading.text.field}
                   constantValueEnabled={
                     summaryCard.heading.text.constantValueEnabled
@@ -960,7 +953,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                 <div className="ybh-info-grid" style={panelTextStyle}>
                   <div>
                     <EntityField
-                      displayName="Address Label"
+                      displayName={pt("fields.addressLabel", "Address Label")}
                       fieldId={summaryCard.addressLabel.text.field}
                       constantValueEnabled={
                         summaryCard.addressLabel.text.constantValueEnabled
@@ -975,7 +968,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                     </EntityField>
                     {resolvedAddress ? (
                       <EntityField
-                        displayName="Address"
+                        displayName={pt("fields.address", "Address")}
                         fieldId={summaryCard.address.field}
                         constantValueEnabled={
                           summaryCard.address.constantValueEnabled
@@ -991,7 +984,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                   </div>
                   <div>
                     <EntityField
-                      displayName="Phone Label"
+                      displayName={pt("fields.phoneLabel", "Phone Label")}
                       fieldId={summaryCard.phoneLabel.text.field}
                       constantValueEnabled={
                         summaryCard.phoneLabel.text.constantValueEnabled
@@ -1008,7 +1001,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                       summaryCard.phones.includeHyperlink ? (
                         <EntityField
                           key={item.formatted}
-                          displayName="Phone Number"
+                          displayName={pt("fields.phoneNumber", "Phone Number")}
                           fieldId={item.numberField.field}
                           constantValueEnabled={
                             item.numberField.constantValueEnabled
@@ -1020,7 +1013,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                           >
                             {item.label ? (
                               <EntityField
-                                displayName="Phone Label"
+                                displayName={pt("fields.phoneLabel", "Phone Label")}
                                 fieldId={item.labelField.field}
                                 constantValueEnabled={
                                   item.labelField.constantValueEnabled
@@ -1035,7 +1028,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                       ) : (
                         <EntityField
                           key={item.formatted}
-                          displayName="Phone Number"
+                          displayName={pt("fields.phoneNumber", "Phone Number")}
                           fieldId={item.numberField.field}
                           constantValueEnabled={
                             item.numberField.constantValueEnabled
@@ -1044,7 +1037,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                           <span>
                             {item.label ? (
                               <EntityField
-                                displayName="Phone Label"
+                                displayName={pt("fields.phoneLabel", "Phone Label")}
                                 fieldId={item.labelField.field}
                                 constantValueEnabled={
                                   item.labelField.constantValueEnabled
@@ -1061,7 +1054,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                   </div>
                   <div>
                     <EntityField
-                      displayName="Accessibility Label"
+                      displayName={pt("fields.accessibilityLabel", "Accessibility Label")}
                       fieldId={summaryCard.accessibilityLabel.text.field}
                       constantValueEnabled={
                         summaryCard.accessibilityLabel.text.constantValueEnabled
@@ -1075,7 +1068,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                       </div>
                     </EntityField>
                     <EntityField
-                      displayName="Accessibility Body"
+                      displayName={pt("fields.accessibilityBody", "Accessibility Body")}
                       fieldId={summaryCard.accessibilityBody.text.field}
                       constantValueEnabled={
                         summaryCard.accessibilityBody.text.constantValueEnabled
@@ -1091,7 +1084,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                   </div>
                   <div>
                     <EntityField
-                      displayName="Check-In Label"
+                      displayName={pt("fields.checkInLabel", "Check-In Label")}
                       fieldId={summaryCard.checkInLabel.text.field}
                       constantValueEnabled={
                         summaryCard.checkInLabel.text.constantValueEnabled
@@ -1105,7 +1098,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                       </div>
                     </EntityField>
                     <EntityField
-                      displayName="Check-In Body"
+                      displayName={pt("fields.checkInBody", "Check-In Body")}
                       fieldId={summaryCard.checkInBody.text.field}
                       constantValueEnabled={
                         summaryCard.checkInBody.text.constantValueEnabled
@@ -1121,7 +1114,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                   </div>
                   <div className="ybh-info-cta-row">
                     <EntityField
-                      displayName="Visit Call to Action"
+                      displayName={pt("fields.visitCallToAction", "Visit Call to Action")}
                       fieldId={summaryCard.visitCta.data.cta.field}
                       constantValueEnabled={
                         summaryCard.visitCta.data.cta.constantValueEnabled
@@ -1137,7 +1130,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                       />
                     </EntityField>
                     <EntityField
-                      displayName="Availability Call to Action"
+                      displayName={pt("fields.availabilityCallToAction", "Availability Call to Action")}
                       fieldId={summaryCard.availabilityCta.data.cta.field}
                       constantValueEnabled={
                         summaryCard.availabilityCta.data.cta
@@ -1164,7 +1157,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
               />
             </article>
 
-            <article className="ybh-info-panel is-reversed">
+            <article className="ybh-info-panel is-reversed max-[899px]:[grid-template-areas:var(--ybh-info-mobile-grid-areas)]">
               <Background
                 className="ybh-info-panel-card"
                 background={section.panelBackgroundColor}
@@ -1174,7 +1167,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                 )}
               >
                 <EntityField
-                  displayName="Hours Heading"
+                  displayName={pt("fields.hoursHeading", "Hours Heading")}
                   fieldId={hoursCard.heading.text.field}
                   constantValueEnabled={
                     hoursCard.heading.text.constantValueEnabled
@@ -1183,7 +1176,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                   <h2 style={cardHeadingStyle}>{resolvedHoursHeading}</h2>
                 </EntityField>
                 <EntityField
-                  displayName="Hours"
+                  displayName={pt("fields.hours", "Hours")}
                   fieldId={hoursCard.hours.field}
                   constantValueEnabled={hoursCard.hours.constantValueEnabled}
                 >
@@ -1221,7 +1214,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
               />
             </article>
 
-            <article className="ybh-info-panel">
+            <article className="ybh-info-panel max-[899px]:[grid-template-areas:var(--ybh-info-mobile-grid-areas)]">
               <Background
                 className="ybh-info-panel-card"
                 background={section.panelBackgroundColor}
@@ -1231,7 +1224,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                 )}
               >
                 <EntityField
-                  displayName="Complimentary Items Heading"
+                  displayName={pt("fields.complimentaryItemsHeading", "Complimentary Items Heading")}
                   fieldId={complimentaryCard.heading.text.field}
                   constantValueEnabled={
                     complimentaryCard.heading.text.constantValueEnabled
@@ -1242,7 +1235,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
                   </h2>
                 </EntityField>
                 <EntityField
-                  displayName="Complimentary Items"
+                  displayName={pt("fields.complimentaryItems", "Complimentary Items")}
                   fieldId={complimentaryCard.list.text.field}
                   constantValueEnabled={
                     complimentaryCard.list.text.constantValueEnabled
@@ -1273,7 +1266,7 @@ const BoutiqueHospitalityInfoPanelsComponent: PuckComponent<
 
 export const BoutiqueHospitalityInfoPanels: YextComponentConfig<BoutiqueHospitalityInfoPanelsProps> =
   {
-    label: "Info Panels",
+    label: msg("components.infoPanels", "Info Panels"),
     fields: InfoPanelsFields,
     defaultProps: {
       section: {
@@ -1477,7 +1470,6 @@ export const BoutiqueHospitalityInfoPanels: YextComponentConfig<BoutiqueHospital
             fontStyle: "default",
             textTransform: "default",
           },
-          fontColor: undefined,
         },
         text: {
           styles: {
@@ -1487,7 +1479,6 @@ export const BoutiqueHospitalityInfoPanels: YextComponentConfig<BoutiqueHospital
             fontStyle: "default",
             textTransform: "default",
           },
-          fontColor: undefined,
         },
         label: {
           styles: {
@@ -1497,7 +1488,6 @@ export const BoutiqueHospitalityInfoPanels: YextComponentConfig<BoutiqueHospital
             fontStyle: "default",
             textTransform: "default",
           },
-          fontColor: undefined,
         },
       },
     },

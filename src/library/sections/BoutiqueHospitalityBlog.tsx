@@ -1,3 +1,4 @@
+import { pt } from "@yext/visual-editor";
 import type { SectionConfig } from "@yext/visual-editor";
 
 import * as React from "react";
@@ -30,7 +31,7 @@ import {
   msg,
 } from "@yext/visual-editor";
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
-import { getTextStyle, renderRichText } from "../shared/sectionStyles";
+import { getTextStyle, renderRichText, resolveRichTextStyles } from "../shared/sectionStyles";
 
 type BlogItemFields = {
   image: YextEntityField<ImageType | ComplexImageType | TranslatableAssetImage>;
@@ -46,53 +47,51 @@ type BlogItemFields = {
 type BlogCardStyles = {
   title: {
     styles: StyledTextValue;
-    fontColor?: ThemeColor;
   };
   description: {
     styles: StyledTextValue;
-    fontColor?: ThemeColor;
   };
   cta: ComprehensiveCTAValue["styles"];
 };
 
 const blogSource = createItemSource<BlogItemFields>({
-  label: "Blog Items",
+  label: msg("fields.blogItems", "Blog Items"),
   mappingFields: {
     image: {
       type: "entityField",
-      label: "Image",
+      label: msg("fields.image", "Image"),
       filter: { types: ["type.image"] },
     },
     title: {
       type: "entityField",
-      label: "Title",
+      label: msg("fields.title", "Title"),
       filter: { types: ["type.string"] },
     },
     description: {
       type: "entityField",
-      label: "Description",
+      label: msg("fields.description", "Description"),
       filter: { types: ["type.rich_text_v2"] },
     },
     cta: {
-      label: "CTA",
+      label: msg("fields.cta", "CTA"),
       type: "object",
       objectFields: {
         label: {
           type: "entityField",
-          label: "Label",
+          label: msg("fields.label", "Label"),
           filter: { types: ["type.string"] },
         },
         link: {
           type: "entityField",
-          label: "Link",
+          label: msg("fields.link", "Link"),
           filter: { types: ["type.string"] },
         },
         openInNewTab: {
-          label: "Open in New Tab",
+          label: msg("fields.openInNewTab", "Open in New Tab"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.options.yes", "Yes"), value: true },
+            { label: msg("fields.options.no", "No"), value: false },
           ],
         },
       },
@@ -183,7 +182,6 @@ type BoutiqueHospitalityBlogProps = {
   heading: {
     text: YextEntityField<TranslatableString>;
     styles: StyledTextValue;
-    fontColor?: ThemeColor;
   };
   cards: {
     data: typeof blogSource.value;
@@ -225,11 +223,10 @@ const BlogFields: YextFields<BoutiqueHospitalityBlogProps> = {
         label: msg("fields.text", "Text"),
         filter: { types: ["type.string"] },
       },
-      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-      fontColor: {
-        label: msg("fields.fontColor", "Font Color"),
-        type: "basicSelector",
-        options: "SITE_COLOR",
+      styles: {
+        label: msg("fields.textStyles", "Text Styles"),
+        type: "styledText",
+        includeColor: true,
       },
     },
   },
@@ -239,7 +236,7 @@ const BlogFields: YextFields<BoutiqueHospitalityBlogProps> = {
     objectFields: {
       data: {
         ...blogSource.field,
-        label: "Data",
+        label: msg("fields.data", "Data"),
       },
       styles: {
         label: msg("fields.styles", "Styles"),
@@ -249,11 +246,10 @@ const BlogFields: YextFields<BoutiqueHospitalityBlogProps> = {
             label: msg("fields.title", "Title"),
             type: "object",
             objectFields: {
-              styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-              fontColor: {
-                label: msg("fields.fontColor", "Font Color"),
-                type: "basicSelector",
-                options: "SITE_COLOR",
+              styles: {
+                label: msg("fields.textStyles", "Text Styles"),
+                type: "styledText",
+                includeColor: true,
               },
             },
           },
@@ -261,11 +257,10 @@ const BlogFields: YextFields<BoutiqueHospitalityBlogProps> = {
             label: msg("fields.description", "Description"),
             type: "object",
             objectFields: {
-              styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-              fontColor: {
-                label: msg("fields.fontColor", "Font Color"),
-                type: "basicSelector",
-                options: "SITE_COLOR",
+              styles: {
+                label: msg("fields.textStyles", "Text Styles"),
+                type: "styledText",
+                includeColor: true,
               },
             },
           },
@@ -332,7 +327,7 @@ const BoutiqueHospitalityBlogComponent: PuckComponent<
     resolvedCardRows[rowIndex].push(card);
   });
   const sectionTextColor =
-    getThemeColorCssValue(heading.fontColor) ??
+    getThemeColorCssValue(heading.styles.color) ??
     getThemeColorCssValue(
       getDefaultForegroundColor(section.backgroundColor, streamDocument),
     );
@@ -370,7 +365,7 @@ const BoutiqueHospitalityBlogComponent: PuckComponent<
           .ybh-blog-heading-text {
             margin: 0;
             color: inherit;
-            font-family: var(--fontFamily-h2-fontFamily, "Fraunces", serif);
+            font-family: var(--fontFamily-h2-fontFamily, Fraunces, serif);
             font-size: clamp(2.25rem, 3.75vw, 3.25rem);
             line-height: 0.95;
           }
@@ -404,7 +399,7 @@ const BoutiqueHospitalityBlogComponent: PuckComponent<
           .ybh-blog-card-title {
             margin: 0;
             color: inherit;
-            font-family: var(--fontFamily-h3-fontFamily, "Fraunces", serif);
+            font-family: var(--fontFamily-h3-fontFamily, Fraunces, serif);
             font-size: clamp(1.75rem, 2.4vw, 2.15rem);
             line-height: 1.05;
           }
@@ -433,7 +428,7 @@ const BoutiqueHospitalityBlogComponent: PuckComponent<
             <div className="ybh-blog-heading">
               <span className="ybh-blog-line" aria-hidden />
               <EntityField
-                displayName="Heading"
+                displayName={pt("fields.heading", "Heading")}
                 fieldId={heading.text.field}
                 constantValueEnabled={heading.text.constantValueEnabled}
               >
@@ -449,7 +444,7 @@ const BoutiqueHospitalityBlogComponent: PuckComponent<
               </EntityField>
             </div>
             <EntityField
-              displayName="Blog Items"
+              displayName={pt("fields.blogItems", "Blog Items")}
               fieldId={cards.data.field}
               constantValueEnabled={cards.data.constantValueEnabled}
             >
@@ -481,16 +476,16 @@ const BoutiqueHospitalityBlogComponent: PuckComponent<
                             { output: "plainText" },
                           ) || "#";
                         const titleColor =
-                          getThemeColorCssValue(cards.styles.title.fontColor) ??
+                          getThemeColorCssValue(cards.styles.title.styles.color) ??
                           cardTextColor;
                         const descriptionColor =
                           getThemeColorCssValue(
-                            cards.styles.description.fontColor,
+                            cards.styles.description.styles.color,
                           ) ?? cardTextColor;
-                        const descriptionRichTextStyleOverrides = {
-                          ...cards.styles.description.styles,
-                          color: descriptionColor,
-                        };
+                        const descriptionRichTextStyleOverrides = resolveRichTextStyles(
+                            cards.styles.description.styles,
+                            getDefaultForegroundColor(section.cardBackgroundColor, streamDocument),
+                        );
                         const descriptionValue = item.description
                           ? resolveComponentData(
                               item.description,
@@ -607,7 +602,7 @@ const BoutiqueHospitalityBlogComponent: PuckComponent<
 
 export const BoutiqueHospitalityBlog: YextComponentConfig<BoutiqueHospitalityBlogProps> =
   {
-    label: "Blog",
+    label: msg("components.blog", "Blog"),
     fields: toPuckFields<BoutiqueHospitalityBlogProps>(BlogFields),
     defaultProps: {
       section: {
@@ -634,7 +629,6 @@ export const BoutiqueHospitalityBlog: YextComponentConfig<BoutiqueHospitalityBlo
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       cards: {
         data: blogSource.defaultValue,
@@ -647,7 +641,6 @@ export const BoutiqueHospitalityBlog: YextComponentConfig<BoutiqueHospitalityBlo
               fontStyle: "default",
               textTransform: "default",
             },
-            fontColor: undefined,
           },
           description: {
             styles: {
@@ -657,7 +650,6 @@ export const BoutiqueHospitalityBlog: YextComponentConfig<BoutiqueHospitalityBlo
               fontStyle: "default",
               textTransform: "default",
             },
-            fontColor: undefined,
           },
           cta: {
             variant: "secondary",

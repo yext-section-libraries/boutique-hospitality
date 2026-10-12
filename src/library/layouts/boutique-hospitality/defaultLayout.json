@@ -279,11 +279,11 @@
                   "fontStyle": "default",
                   "fontFamily": "default",
                   "fontWeight": "default",
-                  "textTransform": "uppercase"
-                },
-                "fontColor": {
-                  "selectedColor": "palette-primary",
-                  "contrastingColor": "palette-primary-contrast"
+                  "textTransform": "uppercase",
+                  "color": {
+                    "selectedColor": "palette-primary",
+                    "contrastingColor": "palette-primary-contrast"
+                  }
                 }
               },
               "includeCurrentPage": true
@@ -311,12 +311,12 @@
                   "fontStyle": "default",
                   "fontFamily": "default",
                   "fontWeight": "default",
-                  "textTransform": "default"
-                },
-                "fontColor": {
-                  "isDarkColor": false,
-                  "selectedColor": "palette-primary",
-                  "contrastingColor": "palette-primary-contrast"
+                  "textTransform": "default",
+                  "color": {
+                    "isDarkColor": false,
+                    "selectedColor": "palette-primary",
+                    "contrastingColor": "palette-primary-contrast"
+                  }
                 }
               },
               "heroImage": {
@@ -1788,12 +1788,12 @@
             "fontStyle": "default",
             "fontFamily": "default",
             "fontWeight": "default",
-            "textTransform": "default"
-          },
-          "fontColor": {
-            "isDarkColor": false,
-            "selectedColor": "palette-primary",
-            "contrastingColor": "palette-primary-contrast"
+            "textTransform": "default",
+            "color": {
+              "isDarkColor": false,
+              "selectedColor": "palette-primary",
+              "contrastingColor": "palette-primary-contrast"
+            }
           }
         },
         "phones": {

@@ -1,3 +1,4 @@
+import { pt } from "@yext/visual-editor";
 import type { SectionConfig } from "@yext/visual-editor";
 
 import { PuckComponent } from "@puckeditor/core";
@@ -22,13 +23,12 @@ import {
   useDocument,
   msg,
 } from "@yext/visual-editor";
-import { renderRichText } from "../shared/sectionStyles";
+import { renderRichText, resolveRichTextStyles } from "../shared/sectionStyles";
 
 type BoutiqueHospitalityBannerProps = {
   data: {
     text: YextEntityField<TranslatableRichText>;
     styles: StyledTextValue;
-    fontColor?: ThemeColor;
   };
   styles: {
     textAlignment: "left" | "center" | "right";
@@ -71,11 +71,7 @@ const BoutiqueHospitalityBannerFields: YextFields<BoutiqueHospitalityBannerProps
       styles: {
         label: msg("fields.textStyles", "Text Styles"),
         type: "styledText",
-      },
-      fontColor: {
-        label: msg("fields.textColor", "Text Color"),
-        type: "basicSelector",
-        options: "SITE_COLOR",
+        includeColor: true,
       },
     },
   },
@@ -146,10 +142,10 @@ const BoutiqueHospitalityBannerComponent: PuckComponent<BoutiqueHospitalityBanne
           <CircleSlash2 className="h-10 w-10 flex-shrink-0 text-gray-400" />
           <div className="flex flex-col items-start">
             <Body className="font-medium text-gray-500" variant="sm">
-              Section hidden for this page
+              {pt("sectionHiddenForPage", "Section hidden for this page")}
             </Body>
             <Body className="font-normal text-gray-500" variant="sm">
-              The mapped banner field is empty
+              {pt("mappedBannerFieldEmpty", "The mapped banner field is empty")}
             </Body>
           </div>
         </div>
@@ -157,10 +153,10 @@ const BoutiqueHospitalityBannerComponent: PuckComponent<BoutiqueHospitalityBanne
     );
   }
 
-  const richTextStyleOverrides = {
-    ...data.styles,
-    color: data.fontColor ?? section.backgroundColor.contrastingColor,
-  };
+  const richTextStyleOverrides = resolveRichTextStyles(
+    data.styles,
+    section.backgroundColor.contrastingColor,
+  );
   const resolvedText = resolveComponentData(
     data.text,
     i18n.language,
@@ -185,7 +181,7 @@ const BoutiqueHospitalityBannerComponent: PuckComponent<BoutiqueHospitalityBanne
     >
       <EntityField
         constantValueEnabled={data.text.constantValueEnabled}
-        displayName="Banner Text"
+        displayName={pt("fields.bannerText", "Banner Text")}
         fieldId={data.text.field}
       >
         {renderRichText(resolvedText, richTextStyleOverrides)}
@@ -198,7 +194,7 @@ const BoutiqueHospitalityBannerComponent: PuckComponent<BoutiqueHospitalityBanne
  * Displays a full-width, editor-configurable rich-text banner.
  */
 export const BoutiqueHospitalityBanner: YextComponentConfig<BoutiqueHospitalityBannerProps> = {
-  label: "Banner",
+  label: msg("components.banner", "Banner"),
   fields: toPuckFields<BoutiqueHospitalityBannerProps>(
     BoutiqueHospitalityBannerFields,
   ),

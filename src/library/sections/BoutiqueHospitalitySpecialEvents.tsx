@@ -1,6 +1,6 @@
+import { pt } from "@yext/visual-editor";
 import type { SectionConfig } from "@yext/visual-editor";
 
-import * as React from "react";
 import type { PuckComponent } from "@puckeditor/core";
 import { AnalyticsScopeProvider } from "@yext/pages-components";
 import {
@@ -29,18 +29,16 @@ import {
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
 import { createCta } from "../shared/createCta";
 import { aspectRatioOptions } from "../shared/fieldOptions";
-import { getTextStyle } from "../shared/sectionStyles";
+import { getTextStyle, renderRichText, resolveRichTextStyles } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<string>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type StyledRtfProps = {
   text: YextEntityField<TranslatableRichText>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type ImageFieldProps = {
@@ -95,11 +93,10 @@ const EventsFields: YextFields<BoutiqueHospitalitySpecialEventsProps> = {
         label: msg("fields.text", "Text"),
         filter: { types: ["type.string"] },
       },
-      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-      fontColor: {
-        label: msg("fields.fontColor", "Font Color"),
-        type: "basicSelector",
-        options: "SITE_COLOR",
+      styles: {
+        label: msg("fields.textStyles", "Text Styles"),
+        type: "styledText",
+        includeColor: true,
       },
     },
   },
@@ -112,11 +109,10 @@ const EventsFields: YextFields<BoutiqueHospitalitySpecialEventsProps> = {
         label: msg("fields.text", "Text"),
         filter: { types: ["type.rich_text_v2"] },
       },
-      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-      fontColor: {
-        label: msg("fields.fontColor", "Font Color"),
-        type: "basicSelector",
-        options: "SITE_COLOR",
+      styles: {
+        label: msg("fields.textStyles", "Text Styles"),
+        type: "styledText",
+        includeColor: true,
       },
     },
   },
@@ -169,13 +165,17 @@ const BoutiqueHospitalitySpecialEventsComponent: PuckComponent<
     getDefaultForegroundColor(section.panelBackgroundColor, streamDocument),
   );
   const headingColor =
-    getThemeColorCssValue(heading.fontColor) ?? panelTextColor;
-  const bodyColor = getThemeColorCssValue(body.fontColor) ?? panelTextColor;
+    getThemeColorCssValue(heading.styles.color) ?? panelTextColor;
+  const bodyColor = getThemeColorCssValue(body.styles.color) ?? panelTextColor;
   const panelColor = getThemeColorCssValue(section.panelBackgroundColor);
   const overlayColor = getThemeColorCssValue(section.backgroundColor);
-  const bodyContent = React.isValidElement(resolvedBody)
-    ? resolvedBody
-    : (resolvedBody ?? null);
+  const bodyContent = renderRichText(
+    resolvedBody,
+    resolveRichTextStyles(
+      body.styles,
+      getDefaultForegroundColor(section.panelBackgroundColor, streamDocument),
+    ),
+  );
   return (
     <VisibilityWrapper
       liveVisibility={section.visibleOnLivePage}
@@ -207,7 +207,6 @@ const BoutiqueHospitalitySpecialEventsComponent: PuckComponent<
             z-index: 1;
           }
           .ybh-events-media::before {
-            content: "";
             position: absolute;
             inset: 0;
               background: linear-gradient(
@@ -215,7 +214,7 @@ const BoutiqueHospitalitySpecialEventsComponent: PuckComponent<
               transparent 0%,
               transparent 42%,
               transparent 58%,
-              ${overlayColor} 100%
+              var(--ybh-events-overlay-color) 100%
             );
             pointer-events: none;
             z-index: 1;
@@ -236,7 +235,7 @@ const BoutiqueHospitalitySpecialEventsComponent: PuckComponent<
             margin: 28px 0 28px auto;
             padding: 24px;
             border: 1px solid currentColor;
-            background: ${panelColor};
+            background: var(--ybh-events-panel-color);
             display: flex;
             flex-direction: column;
             gap: 18px;
@@ -270,11 +269,6 @@ const BoutiqueHospitalitySpecialEventsComponent: PuckComponent<
             }
           }
           @media (max-width: 899px) {
-            .ybh-events-panel {
-              grid-template-areas:
-                "media"
-                "copy";
-            }
             .ybh-events-media {
               grid-area: media;
               position: relative;
@@ -284,7 +278,7 @@ const BoutiqueHospitalitySpecialEventsComponent: PuckComponent<
               min-height: 0;
             }
             .ybh-events-media::before {
-              background: linear-gradient(180deg, transparent 0%, ${overlayColor} 100%);
+              background: linear-gradient(180deg, transparent 0%, var(--ybh-events-overlay-color) 100%);
             }
             .ybh-events-media .ybh-events-image img {
               object-position: center center;
@@ -304,11 +298,17 @@ const BoutiqueHospitalitySpecialEventsComponent: PuckComponent<
           as="section"
           className="ybh-events-shell"
           background={section.backgroundColor}
-          style={getSurfaceColorStyle(section.backgroundColor, streamDocument)}
+          style={{
+            ...getSurfaceColorStyle(section.backgroundColor, streamDocument),
+            "--ybh-events-overlay-color": overlayColor,
+            "--ybh-events-panel-color": panelColor,
+            "--ybh-events-overlay-content": '""',
+            "--ybh-events-mobile-grid-areas": '"media" "copy"',
+          } as React.CSSProperties}
         >
           <div className="ybh-events-track">
             <Background
-              className={`ybh-events-panel${hasImage ? "" : " ybh-events-panel--no-image"}`}
+              className={`ybh-events-panel max-[899px]:[grid-template-areas:var(--ybh-events-mobile-grid-areas)]${hasImage ? "" : " ybh-events-panel--no-image"}`}
               background={section.panelBackgroundColor}
               style={getSurfaceColorStyle(
                 section.panelBackgroundColor,
@@ -317,11 +317,11 @@ const BoutiqueHospitalitySpecialEventsComponent: PuckComponent<
             >
               {hasImage ? (
                 <EntityField
-                  displayName="Image"
+                  displayName={pt("fields.image", "Image")}
                   fieldId={image.image.field}
                   constantValueEnabled={image.image.constantValueEnabled}
                 >
-                  <div className="ybh-events-media">
+                  <div className="ybh-events-media before:content-[var(--ybh-events-overlay-content)]">
                     <Image
                       image={
                         resolvedImage as
@@ -343,7 +343,7 @@ const BoutiqueHospitalitySpecialEventsComponent: PuckComponent<
               ) : null}
               <div className="ybh-events-copy">
                 <EntityField
-                  displayName="Heading"
+                  displayName={pt("fields.heading", "Heading")}
                   fieldId={heading.text.field}
                   constantValueEnabled={heading.text.constantValueEnabled}
                 >
@@ -362,7 +362,7 @@ const BoutiqueHospitalitySpecialEventsComponent: PuckComponent<
                   </h2>
                 </EntityField>
                 <EntityField
-                  displayName="Body"
+                  displayName={pt("fields.body", "Body")}
                   fieldId={body.text.field}
                   constantValueEnabled={body.text.constantValueEnabled}
                 >
@@ -370,7 +370,7 @@ const BoutiqueHospitalitySpecialEventsComponent: PuckComponent<
                 </EntityField>
                 <div>
                   <EntityField
-                    displayName="Call to Action"
+                    displayName={pt("fields.callToAction", "Call to Action")}
                     fieldId={cta.data.cta.field}
                     constantValueEnabled={cta.data.cta.constantValueEnabled}
                   >
@@ -392,7 +392,7 @@ const BoutiqueHospitalitySpecialEventsComponent: PuckComponent<
 
 export const BoutiqueHospitalitySpecialEvents: YextComponentConfig<BoutiqueHospitalitySpecialEventsProps> =
   {
-    label: "Special Events",
+    label: msg("components.specialEvents", "Special Events"),
     fields: EventsFields,
     defaultProps: {
       section: {
@@ -419,7 +419,6 @@ export const BoutiqueHospitalitySpecialEvents: YextComponentConfig<BoutiqueHospi
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       body: {
         text: {
@@ -439,7 +438,6 @@ export const BoutiqueHospitalitySpecialEvents: YextComponentConfig<BoutiqueHospi
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       image: {
         image: {

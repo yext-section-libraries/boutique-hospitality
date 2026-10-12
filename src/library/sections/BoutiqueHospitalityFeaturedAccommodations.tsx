@@ -1,3 +1,4 @@
+import { pt } from "@yext/visual-editor";
 import type { SectionConfig } from "@yext/visual-editor";
 
 import * as React from "react";
@@ -31,18 +32,16 @@ import {
 } from "@yext/visual-editor";
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
 import { aspectRatioOptions } from "../shared/fieldOptions";
-import { getTextStyle, renderRichText } from "../shared/sectionStyles";
+import { getTextStyle, renderRichText, resolveRichTextStyles } from "../shared/sectionStyles";
 
 type StyledTextProps = {
   text: YextEntityField<TranslatableString>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type StyledRtfProps = {
   text: YextEntityField<TranslatableRichText>;
   styles: StyledTextValue;
-  fontColor?: ThemeColor;
 };
 
 type ImageFieldProps = {
@@ -64,48 +63,46 @@ type AccommodationItemFields = {
 type AccommodationStyles = {
   title: {
     styles: StyledTextValue;
-    fontColor?: ThemeColor;
   };
   description: {
     styles: StyledTextValue;
-    fontColor?: ThemeColor;
   };
   cta: ComprehensiveCTAValue["styles"];
 };
 
 const accommodationsSource = createItemSource<AccommodationItemFields>({
-  label: "Accommodation Items",
+  label: msg("fields.accommodationItems", "Accommodation Items"),
   mappingFields: {
     title: {
       type: "entityField",
-      label: "Title",
+      label: msg("fields.title", "Title"),
       filter: { types: ["type.string"] },
     },
     description: {
       type: "entityField",
-      label: "Description",
+      label: msg("fields.description", "Description"),
       filter: { types: ["type.rich_text_v2"] },
     },
     cta: {
-      label: "CTA",
+      label: msg("fields.cta", "CTA"),
       type: "object",
       objectFields: {
         label: {
           type: "entityField",
-          label: "Label",
+          label: msg("fields.label", "Label"),
           filter: { types: ["type.string"] },
         },
         link: {
           type: "entityField",
-          label: "Link",
+          label: msg("fields.link", "Link"),
           filter: { types: ["type.string"] },
         },
         openInNewTab: {
-          label: "Open in New Tab",
+          label: msg("fields.openInNewTab", "Open in New Tab"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.options.yes", "Yes"), value: true },
+            { label: msg("fields.options.no", "No"), value: false },
           ],
         },
       },
@@ -243,11 +240,10 @@ const FeaturedFields: YextFields<BoutiqueHospitalityFeaturedAccommodationsProps>
           label: msg("fields.text", "Text"),
           filter: { types: ["type.string"] },
         },
-        styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+        styles: {
+          label: msg("fields.textStyles", "Text Styles"),
+          type: "styledText",
+          includeColor: true,
         },
       },
     },
@@ -260,11 +256,10 @@ const FeaturedFields: YextFields<BoutiqueHospitalityFeaturedAccommodationsProps>
           label: msg("fields.text", "Text"),
           filter: { types: ["type.rich_text_v2"] },
         },
-        styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+        styles: {
+          label: msg("fields.textStyles", "Text Styles"),
+          type: "styledText",
+          includeColor: true,
         },
       },
     },
@@ -298,7 +293,7 @@ const FeaturedFields: YextFields<BoutiqueHospitalityFeaturedAccommodationsProps>
       objectFields: {
         data: {
           ...accommodationsSource.field,
-          label: "Data",
+          label: msg("fields.data", "Data"),
         },
         styles: {
           label: msg("fields.styles", "Styles"),
@@ -308,11 +303,10 @@ const FeaturedFields: YextFields<BoutiqueHospitalityFeaturedAccommodationsProps>
               label: msg("fields.title", "Title"),
               type: "object",
               objectFields: {
-                styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-                fontColor: {
-                  label: msg("fields.fontColor", "Font Color"),
-                  type: "basicSelector",
-                  options: "SITE_COLOR",
+                styles: {
+                  label: msg("fields.textStyles", "Text Styles"),
+                  type: "styledText",
+                  includeColor: true,
                 },
               },
             },
@@ -320,11 +314,10 @@ const FeaturedFields: YextFields<BoutiqueHospitalityFeaturedAccommodationsProps>
               label: msg("fields.description", "Description"),
               type: "object",
               objectFields: {
-                styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-                fontColor: {
-                  label: msg("fields.fontColor", "Font Color"),
-                  type: "basicSelector",
-                  options: "SITE_COLOR",
+                styles: {
+                  label: msg("fields.textStyles", "Text Styles"),
+                  type: "styledText",
+                  includeColor: true,
                 },
               },
             },
@@ -382,12 +375,12 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
     streamDocument,
   );
   const headingColor =
-    getThemeColorCssValue(heading.fontColor) ??
+    getThemeColorCssValue(heading.styles.color) ??
     getThemeColorCssValue(
       getDefaultForegroundColor(section.backgroundColor, streamDocument),
     );
   const descriptionColor =
-    getThemeColorCssValue(description.fontColor) ??
+    getThemeColorCssValue(description.styles.color) ??
     getThemeColorCssValue(
       getDefaultForegroundColor(section.backgroundColor, streamDocument),
     );
@@ -435,7 +428,7 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
           .ybh-featured-heading-text {
             margin: 0;
             color: inherit;
-            font-family: var(--fontFamily-h2-fontFamily, "Fraunces", serif);
+            font-family: var(--fontFamily-h2-fontFamily, Fraunces, serif);
             font-size: clamp(2.25rem, 3.75vw, 3.25rem);
             line-height: 0.95;
           }
@@ -443,18 +436,6 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
             margin: 0;
             min-width: 0;
             max-width: 48rem;
-          }
-          .ybh-featured-heading-description .MaybeRTF,
-          .ybh-featured-heading-description .MaybeRTF *,
-          .ybh-featured-item-description .MaybeRTF,
-          .ybh-featured-item-description .MaybeRTF * {
-            color: inherit;
-            font-family: inherit;
-            font-size: inherit;
-            font-weight: inherit;
-            font-style: inherit;
-            text-transform: inherit;
-            line-height: inherit;
           }
           .ybh-featured-heading-description .MaybeRTF p,
           .ybh-featured-item-description .MaybeRTF p {
@@ -543,7 +524,7 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
               <span className="ybh-featured-line" aria-hidden />
               <div className="ybh-featured-heading-copy">
                 <EntityField
-                  displayName="Heading"
+                  displayName={pt("fields.heading", "Heading")}
                   fieldId={heading.text.field}
                   constantValueEnabled={heading.text.constantValueEnabled}
                 >
@@ -559,7 +540,7 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
                   </h2>
                 </EntityField>
                 <EntityField
-                  displayName="Description"
+                  displayName={pt("fields.description", "Description")}
                   fieldId={description.text.field}
                   constantValueEnabled={description.text.constantValueEnabled}
                 >
@@ -571,9 +552,14 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
                       margin: 0,
                     }}
                   >
-                    {renderRichText(resolvedDescription, undefined, {
-                      className: "ybh-featured-heading-description-rtf",
-                    })}
+                    {renderRichText(
+                      resolvedDescription,
+                      resolveRichTextStyles(
+                        description.styles,
+                        getDefaultForegroundColor(section.backgroundColor, streamDocument),
+                      ),
+                      "ybh-featured-heading-description-rtf",
+                    )}
                   </div>
                 </EntityField>
               </div>
@@ -583,7 +569,7 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
             >
               {hasImage ? (
                 <EntityField
-                  displayName="Image"
+                  displayName={pt("fields.image", "Image")}
                   fieldId={image.image.field}
                   constantValueEnabled={image.image.constantValueEnabled}
                 >
@@ -609,7 +595,7 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
                 </EntityField>
               ) : null}
               <EntityField
-                displayName="Accommodation Items"
+                displayName={pt("fields.accommodationItems", "Accommodation Items")}
                 fieldId={items.data.field}
                 constantValueEnabled={items.data.constantValueEnabled}
               >
@@ -645,11 +631,11 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
                         },
                       ) || "#";
                     const itemTitleColor =
-                      getThemeColorCssValue(items.styles.title.fontColor) ??
+                      getThemeColorCssValue(items.styles.title.styles.color) ??
                       listTextColor;
                     const itemDescriptionColor =
                       getThemeColorCssValue(
-                        items.styles.description.fontColor,
+                        items.styles.description.styles.color,
                       ) ?? listTextColor;
                     const itemDescription = item.description
                       ? resolveComponentData(
@@ -681,9 +667,14 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
                             marginTop: "10px",
                           }}
                         >
-                          {renderRichText(itemDescription, undefined, {
-                            className: "ybh-featured-item-description-rtf",
-                          })}
+                          {renderRichText(
+                            itemDescription,
+                            resolveRichTextStyles(
+                              items.styles.description.styles,
+                              getDefaultForegroundColor(section.listSurfaceBackgroundColor, streamDocument),
+                            ),
+                            "ybh-featured-item-description-rtf",
+                          )}
                         </div>
                         <ComprehensiveCTA
                           value={{
@@ -722,7 +713,7 @@ const BoutiqueHospitalityFeaturedAccommodationsComponent: PuckComponent<
 
 export const BoutiqueHospitalityFeaturedAccommodations: YextComponentConfig<BoutiqueHospitalityFeaturedAccommodationsProps> =
   {
-    label: "Featured Accommodations",
+    label: msg("components.featuredAccommodations", "Featured Accommodations"),
     fields: toPuckFields<BoutiqueHospitalityFeaturedAccommodationsProps>(
       FeaturedFields,
     ),
@@ -751,7 +742,6 @@ export const BoutiqueHospitalityFeaturedAccommodations: YextComponentConfig<Bout
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       description: {
         text: {
@@ -771,7 +761,6 @@ export const BoutiqueHospitalityFeaturedAccommodations: YextComponentConfig<Bout
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       image: {
         image: {
@@ -797,7 +786,6 @@ export const BoutiqueHospitalityFeaturedAccommodations: YextComponentConfig<Bout
               fontStyle: "default",
               textTransform: "default",
             },
-            fontColor: undefined,
           },
           description: {
             styles: {
@@ -807,7 +795,6 @@ export const BoutiqueHospitalityFeaturedAccommodations: YextComponentConfig<Bout
               fontStyle: "default",
               textTransform: "default",
             },
-            fontColor: undefined,
           },
           cta: {
             variant: "secondary",

@@ -1,3 +1,4 @@
+import { pt } from "@yext/visual-editor";
 import type { SectionConfig } from "@yext/visual-editor";
 
 import * as React from "react";
@@ -24,7 +25,7 @@ import {
   type YextFields,
   msg,
 } from "@yext/visual-editor";
-import { renderRichText } from "../shared/sectionStyles";
+import { renderRichText, resolveRichTextStyles } from "../shared/sectionStyles";
 
 type FaqItemFields = {
   question: YextEntityField<TranslatableString>;
@@ -32,16 +33,16 @@ type FaqItemFields = {
 };
 
 const faqSource = createItemSource<FaqItemFields>({
-  label: "FAQ Items",
+  label: msg("fields.faqItems", "FAQ Items"),
   mappingFields: {
     question: {
       type: "entityField",
-      label: "Question",
+      label: msg("fields.question", "Question"),
       filter: { types: ["type.string"] },
     },
     answer: {
       type: "entityField",
-      label: "Answer",
+      label: msg("fields.answer", "Answer"),
       filter: { types: ["type.rich_text_v2"] },
     },
   },
@@ -142,17 +143,14 @@ type BoutiqueHospitalityFaqProps = {
   heading: {
     text: YextEntityField<TranslatableString>;
     styles: StyledTextValue;
-    fontColor?: ThemeColor;
   };
   faqs: {
     items: typeof faqSource.value;
     question: {
       styles: StyledTextValue;
-      fontColor?: ThemeColor;
     };
     answer: {
       styles: StyledTextValue;
-      fontColor?: ThemeColor;
     };
   };
 };
@@ -186,11 +184,10 @@ const FaqFields: YextFields<BoutiqueHospitalityFaqProps> = {
         label: msg("fields.text", "Text"),
         filter: { types: ["type.string"] },
       },
-      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-      fontColor: {
-        label: msg("fields.fontColor", "Font Color"),
-        type: "basicSelector",
-        options: "SITE_COLOR",
+      styles: {
+        label: msg("fields.textStyles", "Text Styles"),
+        type: "styledText",
+        includeColor: true,
       },
     },
   },
@@ -203,11 +200,10 @@ const FaqFields: YextFields<BoutiqueHospitalityFaqProps> = {
         label: msg("fields.question", "Question"),
         type: "object",
         objectFields: {
-          styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-          fontColor: {
-            label: msg("fields.fontColor", "Font Color"),
-            type: "basicSelector",
-            options: "SITE_COLOR",
+          styles: {
+            label: msg("fields.textStyles", "Text Styles"),
+            type: "styledText",
+            includeColor: true,
           },
         },
       },
@@ -215,11 +211,10 @@ const FaqFields: YextFields<BoutiqueHospitalityFaqProps> = {
         label: msg("fields.answer", "Answer"),
         type: "object",
         objectFields: {
-          styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-          fontColor: {
-            label: msg("fields.fontColor", "Font Color"),
-            type: "basicSelector",
-            options: "SITE_COLOR",
+          styles: {
+            label: msg("fields.textStyles", "Text Styles"),
+            type: "styledText",
+            includeColor: true,
           },
         },
       },
@@ -240,17 +235,17 @@ const BoutiqueHospitalityFaqComponent: PuckComponent<
     }) || "";
   const resolvedItems = faqSource.resolveItems(faqs.items, streamDocument);
   const headingColor =
-    getThemeColorCssValue(heading.fontColor) ??
+    getThemeColorCssValue(heading.styles.color) ??
     getThemeColorCssValue(
       getDefaultForegroundColor(section.backgroundColor, streamDocument),
     );
   const questionColor =
-    getThemeColorCssValue(faqs.question.fontColor) ??
+    getThemeColorCssValue(faqs.question.styles.color) ??
     getThemeColorCssValue(
       getDefaultForegroundColor(section.backgroundColor, streamDocument),
     );
   const answerColor =
-    getThemeColorCssValue(faqs.answer.fontColor) ??
+    getThemeColorCssValue(faqs.answer.styles.color) ??
     getThemeColorCssValue(
       getDefaultForegroundColor(section.backgroundColor, streamDocument),
     );
@@ -285,7 +280,7 @@ const BoutiqueHospitalityFaqComponent: PuckComponent<
           .ybh-faq-heading-text {
             margin: 0;
             color: inherit;
-            font-family: var(--fontFamily-h2-fontFamily, "Fraunces", serif);
+            font-family: var(--fontFamily-h2-fontFamily, Fraunces, serif);
             font-size: clamp(2.25rem, 3.75vw, 3.25rem);
             line-height: 0.95;
           }
@@ -300,23 +295,27 @@ const BoutiqueHospitalityFaqComponent: PuckComponent<
             justify-content: space-between;
             align-items: center;
             padding: 18px 0;
-            color: ${questionColor};
+            color: var(--ybh-faq-question-color);
             cursor: pointer;
           }
           .ybh-faq-answer {
             padding: 0 0 18px;
-            color: ${answerColor};
+            color: var(--ybh-faq-answer-color);
           }
         `}</style>
         <section
           className="ybh-faq-shell"
-          style={getSurfaceColorStyle(section.backgroundColor, streamDocument)}
+          style={{
+            ...getSurfaceColorStyle(section.backgroundColor, streamDocument),
+            "--ybh-faq-question-color": questionColor,
+            "--ybh-faq-answer-color": answerColor,
+          } as React.CSSProperties}
         >
           <div className="ybh-faq-track">
             <div className="ybh-faq-heading">
               <span className="ybh-faq-line" aria-hidden />
               <EntityField
-                displayName="Heading"
+                displayName={pt("fields.heading", "Heading")}
                 fieldId={heading.text.field}
                 constantValueEnabled={heading.text.constantValueEnabled}
               >
@@ -351,7 +350,7 @@ const BoutiqueHospitalityFaqComponent: PuckComponent<
               </EntityField>
             </div>
             <EntityField
-              displayName="FAQ Items"
+              displayName={pt("fields.faqItems", "FAQ Items")}
               fieldId={faqs.items.field}
               constantValueEnabled={faqs.items.constantValueEnabled}
             >
@@ -364,10 +363,10 @@ const BoutiqueHospitalityFaqComponent: PuckComponent<
                       streamDocument,
                       { output: "plainText" },
                     ) || "";
-                  const answerRichTextStyleOverrides = {
-                    ...faqs.answer.styles,
-                    color: answerColor,
-                  };
+                  const answerRichTextStyleOverrides = resolveRichTextStyles(
+                    faqs.answer.styles,
+                    getDefaultForegroundColor(section.backgroundColor, streamDocument),
+                  );
                   const answerText = item.answer;
                   const answerValue = answerText
                     ? resolveComponentData(answerText, locale, streamDocument)
@@ -446,7 +445,7 @@ const BoutiqueHospitalityFaqComponent: PuckComponent<
 
 export const BoutiqueHospitalityFaq: YextComponentConfig<BoutiqueHospitalityFaqProps> =
   {
-    label: "FAQ",
+    label: msg("components.faqs", "FAQs"),
     fields: toPuckFields<BoutiqueHospitalityFaqProps>(FaqFields),
     defaultProps: {
       section: {
@@ -465,7 +464,6 @@ export const BoutiqueHospitalityFaq: YextComponentConfig<BoutiqueHospitalityFaqP
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       faqs: {
         items: faqSource.defaultValue,
@@ -477,7 +475,6 @@ export const BoutiqueHospitalityFaq: YextComponentConfig<BoutiqueHospitalityFaqP
             fontStyle: "default",
             textTransform: "default",
           },
-          fontColor: undefined,
         },
         answer: {
           styles: {
@@ -487,7 +484,6 @@ export const BoutiqueHospitalityFaq: YextComponentConfig<BoutiqueHospitalityFaqP
             fontStyle: "default",
             textTransform: "default",
           },
-          fontColor: undefined,
         },
       },
     },

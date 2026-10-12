@@ -1,3 +1,4 @@
+import { pt } from "@yext/visual-editor";
 import type { SectionConfig } from "@yext/visual-editor";
 
 import * as React from "react";
@@ -22,6 +23,7 @@ import {
   msg,
 } from "@yext/visual-editor";
 import { useTranslation } from "react-i18next";
+import { formatRating, getLocalizedCountOptions } from "../shared/localization";
 import { getTextStyle } from "../shared/sectionStyles";
 
 type ReviewItem = {
@@ -53,25 +55,21 @@ type BoutiqueHospitalityReviewsProps = {
   heading: {
     text: YextEntityField<TranslatableString>;
     styles: StyledTextValue;
-    fontColor?: ThemeColor;
   };
 };
 
 const editorSampleReviews: ReviewItem[] = [
   {
-    authorName: "Guest Review",
     rating: 5,
     content:
       "Beautiful property, thoughtful service, and a perfect location for exploring the city.",
   },
   {
-    authorName: "Guest Review",
     rating: 5,
     content:
       "The room was comfortable, the staff was warm, and every detail felt intentional.",
   },
   {
-    authorName: "Guest Review",
     rating: 4,
     content:
       "A memorable stay with elegant design, great recommendations, and easy access to local favorites.",
@@ -100,15 +98,18 @@ const ReviewsFields: YextFields<BoutiqueHospitalityReviewsProps> = {
     type: "object",
     objectFields: {
       text: { type: "entityField", label: msg("fields.text", "Text"), filter: { types: ["type.string"] } },
-      styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-      fontColor: { label: msg("fields.fontColor", "Font Color"), type: "basicSelector", options: "SITE_COLOR" },
+      styles: {
+        label: msg("fields.textStyles", "Text Styles"),
+        type: "styledText",
+        includeColor: true,
+      },
     },
   },
 };
 
 const BoutiqueHospitalityReviewsComponent: PuckComponent<BoutiqueHospitalityReviewsProps> = ({ id, section, heading, puck }) => {
   const streamDocument = useDocument<ReviewsDocument>();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const locale = streamDocument.locale ?? "en";
   const resolvedHeading = resolveComponentData(heading.text, locale, streamDocument, { output: "plainText" }) || "";
   const { averageRating, reviewCount } = getAggregateRating(streamDocument);
@@ -117,7 +118,7 @@ const BoutiqueHospitalityReviewsComponent: PuckComponent<BoutiqueHospitalityRevi
   const visibleReviews = reviews.length ? reviews : puck.isEditing ? editorSampleReviews : [];
   const displayedAverageRating = reviews.length ? (averageRating ?? 0) : 4.8;
   const headingColor =
-    getThemeColorCssValue(heading.fontColor) ??
+    getThemeColorCssValue(heading.styles.color) ??
     getThemeColorCssValue(getDefaultForegroundColor(section.backgroundColor, streamDocument));
   const sectionTextColor = getThemeColorCssValue(getDefaultForegroundColor(section.backgroundColor, streamDocument));
   const cardTextColor = getThemeColorCssValue(getDefaultForegroundColor(section.cardBackgroundColor, streamDocument));
@@ -163,7 +164,7 @@ const BoutiqueHospitalityReviewsComponent: PuckComponent<BoutiqueHospitalityRevi
           .ybh-reviews-heading-text {
             margin: 0;
             color: inherit;
-            font-family: var(--fontFamily-h2-fontFamily, "Fraunces", serif);
+            font-family: var(--fontFamily-h2-fontFamily, Fraunces, serif);
             font-size: clamp(2.25rem, 3.75vw, 3.25rem);
             line-height: 0.95;
           }
@@ -193,7 +194,7 @@ const BoutiqueHospitalityReviewsComponent: PuckComponent<BoutiqueHospitalityRevi
               <div className="ybh-reviews-title">
                 <span className="ybh-reviews-line" aria-hidden />
                 <EntityField
-                  displayName="Heading"
+                  displayName={pt("fields.heading", "Heading")}
                   fieldId={heading.text.field}
                   constantValueEnabled={heading.text.constantValueEnabled}
                 >
@@ -213,11 +214,15 @@ const BoutiqueHospitalityReviewsComponent: PuckComponent<BoutiqueHospitalityRevi
                   {t("ratingFromGuestReviews", {
                     defaultValue:
                       "{{rating}} {{stars}} from {{count}} guest reviews",
-                    rating: displayedAverageRating.toFixed(1),
-                    stars: renderRatingStars(displayedAverageRating),
-                    count: reviews.length
-                      ? reviewCount
-                      : visibleReviews.length,
+                    ...getLocalizedCountOptions(
+                      reviews.length ? reviewCount : visibleReviews.length,
+                      i18n.language,
+                      {
+                        rating: formatRating(displayedAverageRating, i18n.language),
+                        stars: renderRatingStars(displayedAverageRating),
+                      },
+                    ),
+                    count: reviews.length ? reviewCount : visibleReviews.length,
                   })}
                 </div>
               ) : null}
@@ -239,7 +244,7 @@ const BoutiqueHospitalityReviewsComponent: PuckComponent<BoutiqueHospitalityRevi
                   <div>
                     {review.authorName
                       ? `- ${review.authorName}`
-                      : "Guest Review"}
+                      : t("guestReview", "Guest Review")}
                   </div>
                 </article>
               ))}
@@ -252,7 +257,7 @@ const BoutiqueHospitalityReviewsComponent: PuckComponent<BoutiqueHospitalityRevi
 };
 
 export const BoutiqueHospitalityReviews: YextComponentConfig<BoutiqueHospitalityReviewsProps> = {
-  label: "Reviews",
+  label: msg("components.reviews", "Reviews"),
   fields: ReviewsFields,
   defaultProps: {
     section: {
@@ -263,7 +268,6 @@ export const BoutiqueHospitalityReviews: YextComponentConfig<BoutiqueHospitality
     heading: {
       text: { field: "", constantValue: "What Guests Are Saying", constantValueEnabled: true },
       styles: { fontFamily: "default", fontSize: "default", fontWeight: "default", fontStyle: "default", textTransform: "default" },
-      fontColor: undefined,
     },
   },
   render: BoutiqueHospitalityReviewsComponent,

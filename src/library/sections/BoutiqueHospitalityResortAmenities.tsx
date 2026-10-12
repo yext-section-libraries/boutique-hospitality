@@ -1,3 +1,4 @@
+import { pt } from "@yext/visual-editor";
 import type { SectionConfig } from "@yext/visual-editor";
 
 import * as React from "react";
@@ -30,7 +31,7 @@ import {
   msg,
 } from "@yext/visual-editor";
 import type { ComplexImageType, ImageType } from "@yext/pages-components";
-import { renderRichText } from "../shared/sectionStyles";
+import { renderRichText, resolveRichTextStyles } from "../shared/sectionStyles";
 
 type AmenityItemFields = {
   image: YextEntityField<ImageType | ComplexImageType | TranslatableAssetImage>;
@@ -46,53 +47,51 @@ type AmenityItemFields = {
 type AmenityStyles = {
   title: {
     styles: StyledTextValue;
-    fontColor?: ThemeColor;
   };
   description: {
     styles: StyledTextValue;
-    fontColor?: ThemeColor;
   };
   cta: ComprehensiveCTAValue["styles"];
 };
 
 const amenitiesSource = createItemSource<AmenityItemFields>({
-  label: "Amenity Items",
+  label: msg("fields.amenityItems", "Amenity Items"),
   mappingFields: {
     image: {
       type: "entityField",
-      label: "Image",
+      label: msg("fields.image", "Image"),
       filter: { types: ["type.image"] },
     },
     title: {
       type: "entityField",
-      label: "Title",
+      label: msg("fields.title", "Title"),
       filter: { types: ["type.string"] },
     },
     description: {
       type: "entityField",
-      label: "Description",
+      label: msg("fields.description", "Description"),
       filter: { types: ["type.rich_text_v2"] },
     },
     cta: {
-      label: "CTA",
+      label: msg("fields.cta", "CTA"),
       type: "object",
       objectFields: {
         label: {
           type: "entityField",
-          label: "Label",
+          label: msg("fields.label", "Label"),
           filter: { types: ["type.string"] },
         },
         link: {
           type: "entityField",
-          label: "Link",
+          label: msg("fields.link", "Link"),
           filter: { types: ["type.string"] },
         },
         openInNewTab: {
-          label: "Open in New Tab",
+          label: msg("fields.openInNewTab", "Open in New Tab"),
           type: "radio",
           options: [
-            { label: "Yes", value: true },
-            { label: "No", value: false },
+            { label: msg("fields.options.yes", "Yes"), value: true },
+            { label: msg("fields.options.no", "No"), value: false },
           ],
         },
       },
@@ -216,7 +215,6 @@ type BoutiqueHospitalityResortAmenitiesProps = {
   heading: {
     text: YextEntityField<TranslatableString>;
     styles: StyledTextValue;
-    fontColor?: ThemeColor;
   };
   amenities: {
     data: typeof amenitiesSource.value;
@@ -259,11 +257,10 @@ const AmenitiesFields: YextFields<BoutiqueHospitalityResortAmenitiesProps> =
           label: msg("fields.text", "Text"),
           filter: { types: ["type.string"] },
         },
-        styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-        fontColor: {
-          label: msg("fields.fontColor", "Font Color"),
-          type: "basicSelector",
-          options: "SITE_COLOR",
+        styles: {
+          label: msg("fields.textStyles", "Text Styles"),
+          type: "styledText",
+          includeColor: true,
         },
       },
     },
@@ -273,7 +270,7 @@ const AmenitiesFields: YextFields<BoutiqueHospitalityResortAmenitiesProps> =
       objectFields: {
         data: {
           ...amenitiesSource.field,
-          label: "Data",
+          label: msg("fields.data", "Data"),
         },
         styles: {
           label: msg("fields.styles", "Styles"),
@@ -283,11 +280,10 @@ const AmenitiesFields: YextFields<BoutiqueHospitalityResortAmenitiesProps> =
               label: msg("fields.title", "Title"),
               type: "object",
               objectFields: {
-                styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-                fontColor: {
-                  label: msg("fields.fontColor", "Font Color"),
-                  type: "basicSelector",
-                  options: "SITE_COLOR",
+                styles: {
+                  label: msg("fields.textStyles", "Text Styles"),
+                  type: "styledText",
+                  includeColor: true,
                 },
               },
             },
@@ -295,11 +291,10 @@ const AmenitiesFields: YextFields<BoutiqueHospitalityResortAmenitiesProps> =
               label: msg("fields.description", "Description"),
               type: "object",
               objectFields: {
-                styles: { label: msg("fields.textStyles", "Text Styles"), type: "styledText" },
-                fontColor: {
-                  label: msg("fields.fontColor", "Font Color"),
-                  type: "basicSelector",
-                  options: "SITE_COLOR",
+                styles: {
+                  label: msg("fields.textStyles", "Text Styles"),
+                  type: "styledText",
+                  includeColor: true,
                 },
               },
             },
@@ -373,7 +368,7 @@ const BoutiqueHospitalityResortAmenitiesComponent: PuckComponent<
     getDefaultForegroundColor(section.overlayBackgroundColor, streamDocument),
   );
   const headingColor =
-    getThemeColorCssValue(heading.fontColor) ??
+    getThemeColorCssValue(heading.styles.color) ??
     getThemeColorCssValue(
       getDefaultForegroundColor(section.backgroundColor, streamDocument),
     );
@@ -408,7 +403,7 @@ const BoutiqueHospitalityResortAmenitiesComponent: PuckComponent<
           .ybh-amenities-heading-text {
             margin: 0;
             color: inherit;
-            font-family: var(--fontFamily-h2-fontFamily, "Fraunces", serif);
+            font-family: var(--fontFamily-h2-fontFamily, Fraunces, serif);
             font-size: clamp(2.25rem, 3.75vw, 3.25rem);
             line-height: 0.95;
           }
@@ -425,7 +420,7 @@ const BoutiqueHospitalityResortAmenitiesComponent: PuckComponent<
             overflow: hidden;
             min-height: 500px;
             border: 1px solid currentColor;
-            background: ${overlayColor};
+            background: var(--ybh-amenities-overlay-color);
           }
           .ybh-amenities-card--no-images {
             min-height: 0;
@@ -456,27 +451,22 @@ const BoutiqueHospitalityResortAmenitiesComponent: PuckComponent<
             align-items: center;
             gap: 14px;
             padding: 28px 24px 24px;
-            color: ${overlayTextColor};
+            color: var(--ybh-amenities-overlay-text-color);
             text-align: center;
             background: transparent;
           }
           .ybh-amenities-card-overlay::before {
-            content: "";
             position: absolute;
             inset: 0;
-            background: ${overlayColor};
+            background: var(--ybh-amenities-overlay-color);
             opacity: 0.82;
             pointer-events: none;
-          }
-          .ybh-amenities-card-overlay > * {
-            position: relative;
-            z-index: 1;
           }
           .ybh-amenities-card--no-images .ybh-amenities-card-overlay {
             position: relative;
             inset: auto;
             min-height: 0;
-            background: ${overlayColor};
+            background: var(--ybh-amenities-overlay-color);
           }
           .ybh-amenities-card--no-images .ybh-amenities-card-overlay::before {
             display: none;
@@ -531,13 +521,18 @@ const BoutiqueHospitalityResortAmenitiesComponent: PuckComponent<
           as="section"
           className="ybh-amenities-shell"
           background={section.backgroundColor}
-          style={getSurfaceColorStyle(section.backgroundColor, streamDocument)}
+          style={{
+            ...getSurfaceColorStyle(section.backgroundColor, streamDocument),
+            "--ybh-amenities-overlay-color": overlayColor,
+            "--ybh-amenities-overlay-text-color": overlayTextColor,
+            "--ybh-amenities-overlay-content": '""',
+          } as React.CSSProperties}
         >
           <div className="ybh-amenities-track">
             <div className="ybh-amenities-heading">
               <span className="ybh-amenities-heading-line" aria-hidden />
               <EntityField
-                displayName="Heading"
+                displayName={pt("fields.heading", "Heading")}
                 fieldId={heading.text.field}
                 constantValueEnabled={heading.text.constantValueEnabled}
               >
@@ -573,7 +568,7 @@ const BoutiqueHospitalityResortAmenitiesComponent: PuckComponent<
               </EntityField>
             </div>
             <EntityField
-              displayName="Amenity Items"
+              displayName={pt("fields.amenityItems", "Amenity Items")}
               fieldId={amenities.data.field}
               constantValueEnabled={amenities.data.constantValueEnabled}
             >
@@ -608,15 +603,15 @@ const BoutiqueHospitalityResortAmenitiesComponent: PuckComponent<
                             { output: "plainText" },
                           ) || "#";
                         const titleColor = getThemeColorCssValue(
-                          amenities.styles.title.fontColor,
+                          amenities.styles.title.styles.color,
                         );
                         const descriptionColor = getThemeColorCssValue(
-                          amenities.styles.description.fontColor,
+                          amenities.styles.description.styles.color,
                         );
-                        const descriptionRichTextStyleOverrides = {
-                          ...amenities.styles.description.styles,
-                          color: descriptionColor ?? overlayTextColor,
-                        };
+                        const descriptionRichTextStyleOverrides = resolveRichTextStyles(
+                          amenities.styles.description.styles,
+                          getDefaultForegroundColor(section.overlayBackgroundColor, streamDocument),
+                        );
                         const desc = item.description
                           ? resolveComponentData(
                               item.description,
@@ -648,7 +643,7 @@ const BoutiqueHospitalityResortAmenitiesComponent: PuckComponent<
                               </div>
                             ) : null}
                             <Background
-                              className="ybh-amenities-card-overlay"
+                              className="ybh-amenities-card-overlay before:content-[var(--ybh-amenities-overlay-content)] [&>*]:relative [&>*]:z-[1]"
                               background={section.overlayBackgroundColor}
                             >
                               <h3
@@ -737,7 +732,7 @@ const BoutiqueHospitalityResortAmenitiesComponent: PuckComponent<
 
 export const BoutiqueHospitalityResortAmenities: YextComponentConfig<BoutiqueHospitalityResortAmenitiesProps> =
   {
-    label: "Resort Amenities",
+    label: msg("components.resortAmenities", "Amenities"),
     fields: toPuckFields<BoutiqueHospitalityResortAmenitiesProps>(
       AmenitiesFields,
     ),
@@ -766,7 +761,6 @@ export const BoutiqueHospitalityResortAmenities: YextComponentConfig<BoutiqueHos
           fontStyle: "default",
           textTransform: "default",
         },
-        fontColor: undefined,
       },
       amenities: {
         data: amenitiesSource.defaultValue,
@@ -779,7 +773,6 @@ export const BoutiqueHospitalityResortAmenities: YextComponentConfig<BoutiqueHos
               fontStyle: "default",
               textTransform: "default",
             },
-            fontColor: undefined,
           },
           description: {
             styles: {
@@ -789,7 +782,6 @@ export const BoutiqueHospitalityResortAmenities: YextComponentConfig<BoutiqueHos
               fontStyle: "default",
               textTransform: "default",
             },
-            fontColor: undefined,
           },
           cta: {
             variant: "link",
@@ -825,7 +817,7 @@ export const BoutiqueHospitalityResortAmenities: YextComponentConfig<BoutiqueHos
 
 export const config: SectionConfig = {
   id: "BoutiqueHospitalityResortAmenities",
-  displayName: "Resort Amenities",
-  description: "Resort Amenities",
+  displayName: "Amenities",
+  description: "Amenities",
   pageSetTypes: ["ENTITY"],
 };
