@@ -142,6 +142,7 @@
     "logoURL": "Logo-URL",
     "longitude": "Längengrad",
     "map": "Karte",
+    "mapStartingZoom": "Anfängliche Zoomstufe der Karte",
     "mapboxMapStyle": "Mapbox-Kartenstil",
     "mapCoordinates": "Kartenkoordinaten",
     "mapStyle": "Kartenstil",

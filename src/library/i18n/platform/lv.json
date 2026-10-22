@@ -142,6 +142,7 @@
     "logoURL": "Logotipa URL",
     "longitude": "Garums",
     "map": "Karte",
+    "mapStartingZoom": "Kartes sākotnējais tālummaiņas līmenis",
     "mapboxMapStyle": "Mapbox kartes stils",
     "mapCoordinates": "Kartes koordinātas",
     "mapStyle": "Kartes stils",

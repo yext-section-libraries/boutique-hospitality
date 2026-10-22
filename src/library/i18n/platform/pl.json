@@ -142,6 +142,7 @@
     "logoURL": "Adres URL logo",
     "longitude": "Długość geograficzna",
     "map": "Mapa",
+    "mapStartingZoom": "Początkowy poziom powiększenia mapy",
     "mapboxMapStyle": "Styl mapy Mapbox",
     "mapCoordinates": "Współrzędne mapy",
     "mapStyle": "Styl mapy",
