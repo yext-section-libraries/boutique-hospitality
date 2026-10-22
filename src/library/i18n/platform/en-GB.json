@@ -142,6 +142,7 @@
     "logoURL": "Logo URL",
     "longitude": "Longitude",
     "map": "Map",
+    "mapStartingZoom": "Map Starting Zoom",
     "mapboxMapStyle": "Mapbox Map Style",
     "mapCoordinates": "Map Coordinates",
     "mapStyle": "Map Style",

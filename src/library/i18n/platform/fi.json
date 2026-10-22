@@ -142,6 +142,7 @@
     "logoURL": "Logon URL",
     "longitude": "Pituusaste",
     "map": "Kartta",
+    "mapStartingZoom": "Kartan aloituszoomaus",
     "mapboxMapStyle": "Mapbox-karttatyyli",
     "mapCoordinates": "Kartan koordinaatit",
     "mapStyle": "Karttatyyli",

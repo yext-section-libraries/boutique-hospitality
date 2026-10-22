@@ -142,6 +142,7 @@
     "logoURL": "URL-ul siglei",
     "longitude": "Longitudine",
     "map": "Hartă",
+    "mapStartingZoom": "Nivelul inițial de zoom al hărții",
     "mapboxMapStyle": "Stil hartă Mapbox",
     "mapCoordinates": "Coordonatele hărții",
     "mapStyle": "Stilul hărții",

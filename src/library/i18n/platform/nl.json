@@ -142,6 +142,7 @@
     "logoURL": "Logo-URL",
     "longitude": "Lengte",
     "map": "Kaart",
+    "mapStartingZoom": "Initieel zoomniveau van de kaart",
     "mapboxMapStyle": "Mapbox-kaartstijl",
     "mapCoordinates": "Kaartcoördinaten",
     "mapStyle": "Kaartstijl",

@@ -142,6 +142,7 @@
     "logoURL": "Logoets URL",
     "longitude": "Længde",
     "map": "Kort",
+    "mapStartingZoom": "Kortets startzoom",
     "mapboxMapStyle": "Mapbox-kortstil",
     "mapCoordinates": "Kortkoordinater",
     "mapStyle": "Kortstil",

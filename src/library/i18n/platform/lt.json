@@ -142,6 +142,7 @@
     "logoURL": "Logotipo URL",
     "longitude": "Ilguma",
     "map": "Žemėlapis",
+    "mapStartingZoom": "Pradinis žemėlapio mastelio lygis",
     "mapboxMapStyle": "„Mapbox“ žemėlapio stilius",
     "mapCoordinates": "Žemėlapio koordinatės",
     "mapStyle": "Žemėlapio stilius",

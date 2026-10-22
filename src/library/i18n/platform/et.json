@@ -142,6 +142,7 @@
     "logoURL": "Logo URL",
     "longitude": "Pikkuskraad",
     "map": "Kaart",
+    "mapStartingZoom": "Kaardi algne suumitase",
     "mapboxMapStyle": "Mapboxi kaardistiil",
     "mapCoordinates": "Kaardi koordinaadid",
     "mapStyle": "Kaardistiil",
