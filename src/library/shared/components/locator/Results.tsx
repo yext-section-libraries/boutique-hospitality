@@ -7,7 +7,6 @@ import { getLocalizedCountOptions } from "../../localization";
 import { YextAutoField } from "@yext/visual-editor/section-library-support";
 import { useDocument } from "@yext/visual-editor/section-library-support";
 import { useTemplateMetadata } from "@yext/visual-editor/section-library-support";
-import { getPreferredDistanceUnit } from "@yext/visual-editor/section-library-support";
 import { getLocatorEntityTypeSourceMap } from "@yext/visual-editor/section-library-support";
 import { LocatorConfig } from "@yext/visual-editor/section-library-support";
 import { Body } from "@yext/visual-editor/section-library-support";
@@ -18,6 +17,8 @@ import {
   LocatorResultCardFields,
   LocatorResultCardProps,
 } from "./LocatorResultCard";
+
+import { MILE, type DistanceUnit } from "./distanceUnits";
 
 export const RESULTS_LIMIT = 20;
 export type SearchState = "not started" | "loading" | "complete";
@@ -43,10 +44,10 @@ const getLocatorConfigFromPageSet = (pageSet?: string): LocatorConfig => {
 
 export const translateDistanceUnit = (
   t: (key: string, options?: Record<string, unknown>) => string,
-  unit: "mile" | "kilometer",
+  unit: DistanceUnit,
   count: number
 ) => {
-  if (unit === "mile") {
+  if (unit === MILE) {
     return t("mile", { count, defaultValue: "mile" });
   }
 
@@ -199,6 +200,7 @@ interface ResultsCountSummaryProps {
   searchState: SearchState;
   resultCount: number;
   selectedDistanceOption: number | null;
+  distanceUnit: DistanceUnit;
   filterDisplayName?: string;
 }
 
@@ -206,6 +208,7 @@ export const ResultsCountSummary = ({
   searchState,
   resultCount,
   selectedDistanceOption,
+  distanceUnit,
   filterDisplayName,
 }: ResultsCountSummaryProps) => {
   const { t, i18n } = useTranslation();
@@ -235,13 +238,12 @@ export const ResultsCountSummary = ({
 
   if (filterDisplayName) {
     if (selectedDistanceOption) {
-      const unit = getPreferredDistanceUnit(i18n.language);
       return (
         <Body>
           {t("locationsWithinDistanceOf", {
             ...getLocalizedCountOptions(resultCount, i18n.language, {
               distance: new Intl.NumberFormat(i18n.language).format(selectedDistanceOption),
-              unit: translateDistanceUnit(t, unit, selectedDistanceOption),
+              unit: translateDistanceUnit(t, distanceUnit, selectedDistanceOption),
               name: filterDisplayName,
             }),
             count: resultCount,

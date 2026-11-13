@@ -41,6 +41,7 @@
   "locationsWithinDistanceOf_one": "{{count}} établissement dans un rayon de {{distance}} {{unit}} autour de {{name}}",
   "locationsWithinDistanceOf_other": "{{count}} établissements dans un rayon de {{distance}} {{unit}} autour de {{name}}",
   "mapRequiresOptIn": "Cette carte ne peut être affichée que si les cookies sont activés",
+  "mapRequiresWebGL": "La carte est indisponible car WebGL est indisponible.",
   "mile_many": "miles",
   "mile_one": "mile",
   "mile_other": "miles",
