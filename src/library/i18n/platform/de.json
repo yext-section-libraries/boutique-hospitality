@@ -57,6 +57,7 @@
     "analytics": "Analytics",
     "answer": "Antwort",
     "aspectRatio": "Seitenverhältnis",
+    "autoSearchOnMapMove": "Automatische Suche nach Kartenbewegung",
     "availabilityBadge": "Verfügbarkeits-Badge",
     "availabilityCallToAction": "Handlungsaufforderung zur Verfügbarkeit",
     "availabilityCta": "Verfügbarkeits-CTA",

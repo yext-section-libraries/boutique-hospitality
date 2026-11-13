@@ -57,6 +57,7 @@
     "analytics": "Analitika",
     "answer": "Válasz",
     "aspectRatio": "Oldal arány",
+    "autoSearchOnMapMove": "Automatikus keresés a térképen, mozgás",
     "availabilityBadge": "Elérhetőségi jelvény",
     "availabilityCallToAction": "Cselekvésre ösztönzés az elérhetőség ellenőrzéséhez",
     "availabilityCta": "Elérhetőségi CTA",

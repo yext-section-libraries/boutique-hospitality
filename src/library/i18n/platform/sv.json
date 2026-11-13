@@ -57,6 +57,7 @@
     "analytics": "Analys",
     "answer": "Svar",
     "aspectRatio": "Bildförhållande",
+    "autoSearchOnMapMove": "Sök automatiskt på kartrörelse",
     "availabilityBadge": "Tillgänglighetsmärke",
     "availabilityCallToAction": "Uppmaning att kontrollera tillgänglighet",
     "availabilityCta": "CTA för tillgänglighet",

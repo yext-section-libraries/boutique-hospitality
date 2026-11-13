@@ -57,6 +57,7 @@
     "analytics": "Analyse",
     "answer": "Antwoord",
     "aspectRatio": "Beeldverhouding",
+    "autoSearchOnMapMove": "Automatisch zoeken op kaartbeweging",
     "availabilityBadge": "Beschikbaarheidsbadge",
     "availabilityCallToAction": "Oproep om beschikbaarheid te controleren",
     "availabilityCta": "Beschikbaarheids-CTA",
