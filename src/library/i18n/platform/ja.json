@@ -57,6 +57,7 @@
     "analytics": "分析",
     "answer": "回答",
     "aspectRatio": "アスペクト比",
+    "autoSearchOnMapMove": "地図移動時に自動検索",
     "availabilityBadge": "空き状況バッジ",
     "availabilityCallToAction": "空室状況の確認を促すボタン",
     "availabilityCta": "空き状況CTA",

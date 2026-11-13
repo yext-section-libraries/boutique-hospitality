@@ -57,6 +57,7 @@
     "analytics": "Analytics",
     "answer": "Svar",
     "aspectRatio": "Aspektforhold",
+    "autoSearchOnMapMove": "Søk automatisk på kartbevegelse",
     "availabilityBadge": "Tilgjengelighetsmerke",
     "availabilityCallToAction": "Oppfordring til å sjekke tilgjengelighet",
     "availabilityCta": "CTA for tilgjengelighet",

@@ -57,6 +57,7 @@
     "analytics": "Análise",
     "answer": "Resposta",
     "aspectRatio": "Proporção de aspecto",
+    "autoSearchOnMapMove": "Pesquisar automaticamente no movimento do mapa",
     "availabilityBadge": "Selo de disponibilidade",
     "availabilityCallToAction": "Chamada à ação de disponibilidade",
     "availabilityCta": "CTA de disponibilidade",

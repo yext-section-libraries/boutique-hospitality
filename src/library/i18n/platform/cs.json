@@ -57,6 +57,7 @@
     "analytics": "Analytika",
     "answer": "Odpověď",
     "aspectRatio": "Poměr stran",
+    "autoSearchOnMapMove": "Automaticky hledat při pohybu na mapě",
     "availabilityBadge": "Odznak dostupnosti",
     "availabilityCallToAction": "Výzva k ověření dostupnosti",
     "availabilityCta": "CTA dostupnosti",
